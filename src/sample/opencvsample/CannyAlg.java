@@ -1,5 +1,6 @@
 package sample.opencvsample;
 
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.highgui.Highgui;
@@ -7,6 +8,7 @@ import org.opencv.imgproc.Imgproc;
 
 import static org.opencv.highgui.Highgui.imread;
 import static org.opencv.imgproc.Imgproc.Canny;
+import static org.opencv.imgproc.Imgproc.Sobel;
 import static org.opencv.imgproc.Imgproc.cvtColor;
 
 /**
@@ -20,8 +22,10 @@ public class CannyAlg {
         cvtColor(image, grayedImage, Imgproc.COLOR_RGB2GRAY);
         Mat contours = grayedImage.clone();
         Canny(image, contours, threshold1, threshold2, apertureSize, L2gradient);
+        Mat diffContours = contours.clone();
+        Sobel(contours, diffContours, CvType.CV_16S, 1, 1, 3 , 1, 1);
         MatOfByte matOfByte = new MatOfByte();
-        Highgui.imencode(".jpg", contours, matOfByte);
+        Highgui.imencode(".jpg", diffContours, matOfByte);
         return matOfByte;
     }
 }
