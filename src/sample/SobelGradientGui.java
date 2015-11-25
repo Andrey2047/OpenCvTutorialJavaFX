@@ -84,7 +84,7 @@ public class SobelGradientGui extends Application {
         hBox2.getChildren().addAll(new Label("lowBriLimit"), lowBrightness, new Label("hignBriLimit"), highBrightness);
         hBox3.getChildren().addAll(new Label("scale"), scaleField, new Label("delta"), deltaField);
         hBox4.getChildren().addAll(new Label("ksize"), kSizeField, refreshButton);
-        hBox5.getChildren().addAll(createImageButton("dog"), createImageButton("hand"));
+        hBox5.getChildren().addAll(createImageButton("dog"), createImageButton("hand"), createImageButton("triangle"));
 
         root.getChildren().addAll(hBox0, hBox1, hBox2, hBox3, hBox4, hBox5);
 

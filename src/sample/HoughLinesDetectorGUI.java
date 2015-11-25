@@ -79,7 +79,7 @@ public class HoughLinesDetectorGUI extends Application {
         hBox1.getChildren().addAll(new Label("rhoField"), rhoField, new Label("thetaField"), thetaField);
         hBox3.getChildren().addAll(new Label("threshold"), thresholdField, new Label("srn"), srnField);
         hBox4.getChildren().addAll(new Label("stn"), stnField, refreshButton);
-        hBox5.getChildren().addAll(createImageButton("dog"), createImageButton("hand"), createImageButton("car"));
+        hBox5.getChildren().addAll(createImageButton("dog"), createImageButton("hand"), createImageButton("car"), createImageButton("triangle"));
 
         root.getChildren().addAll(hBox0, hBox1, hBox3, hBox4, hBox5);
 

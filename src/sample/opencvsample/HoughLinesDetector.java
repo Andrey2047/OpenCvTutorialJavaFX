@@ -45,9 +45,7 @@ public class HoughLinesDetector {
 //            pt1.y = round(y0 + 10 * (a));
 //            pt2.x = round(x0 - 10 * (-b));
 //            pt2.y = round(y0 - 10 * (a));
-            if(pointDistance(pt1, pt2) > 20) {
-                Core.line(dst, pt1, pt2, new Scalar(0, 0, 255), 2);
-            }
+              Core.line(dst, pt1, pt2, new Scalar(0, 0, 255), 2);
         }
 
         MatOfByte matOfByte = new MatOfByte();
