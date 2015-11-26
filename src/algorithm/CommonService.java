@@ -1,4 +1,4 @@
-package sample.opencvsample;
+package algorithm;
 
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
@@ -23,5 +23,12 @@ public class CommonService {
         threshold(imageGray, dst, lowBorder, highBorder, Imgproc.THRESH_BINARY);
 
         return dst;
+    }
+
+    public static MatOfByte convertToMatOfByte(Mat mat){
+        MatOfByte dst = new MatOfByte();
+        MatOfByte matOfByte = new MatOfByte();
+        Highgui.imencode(".jpg", dst, matOfByte);
+        return matOfByte;
     }
 }

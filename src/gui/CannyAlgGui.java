@@ -1,4 +1,4 @@
-package sample;
+package gui;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -13,8 +13,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.opencv.core.Core;
-import sample.opencvsample.CannyAlg;
-import sample.opencvsample.SobelGradient;
+import algorithm.CannyAlg;
+import algorithm.SobelGradient;
 
 import java.io.ByteArrayInputStream;
 import java.net.URISyntaxException;
@@ -22,7 +22,7 @@ import java.net.URISyntaxException;
 /**
  * Created by andriiko on 11/25/2015.
  */
-public class CannyAlgGui extends Application {
+public class CannyAlgGui extends AbstractGUI {
 
     static String currentImage = "dog";
 
@@ -40,7 +40,7 @@ public class CannyAlgGui extends Application {
         primaryStage.setHeight(700);
         primaryStage.setWidth(1200);
 
-        Image img = new Image(new ByteArrayInputStream(SobelGradient.execute("src/sample/" + currentImage + ".jpg", 0, 1, 1, 1, 1, 50, 255).toArray()));
+        Image img = createImage(SobelGradient.execute(PATH_TO_IMAGES + currentImage + ".jpg", 0, 1, 1, 1, 1, 50, 255));
 
         imageViewOrigin = new ImageView(new Image(getClass().getResource("dog.jpg").toURI().toString()));
         imageView = new ImageView(img);
@@ -59,7 +59,7 @@ public class CannyAlgGui extends Application {
                 double th2 = Double.valueOf(threshold2.getText());
                 int apperture = Integer.valueOf(appertureSize.getText());
 
-                Image img = new Image(new ByteArrayInputStream(CannyAlg.execute("src/sample/" + currentImage + ".jpg", th1, th2, apperture, true).toArray()));
+                Image img = createImage(CannyAlg.execute(PATH_TO_IMAGES + currentImage + ".jpg", th1, th2, apperture, true));
                 imageView.setImage(img);
             }
         });
@@ -89,7 +89,7 @@ public class CannyAlgGui extends Application {
             @Override
             public void handle(ActionEvent event) {
                 currentImage = imageName;
-                Image img = new Image(new ByteArrayInputStream(CannyAlg.execute("src/sample/" + currentImage + ".jpg", 1, 1, 3, true).toArray()));
+                Image img = createImage(CannyAlg.execute(PATH_TO_IMAGES + currentImage + ".jpg", 1, 1, 3, true));
                 imageView.setImage(img);
                 try {
                     imageViewOrigin.setImage(new Image(getClass().getResource(imageName + ".jpg").toURI().toString()));
@@ -101,8 +101,4 @@ public class CannyAlgGui extends Application {
         return button;
     }
 
-    public static void main(String[] args) {
-        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-        launch(args);
-    }
 }

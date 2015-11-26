@@ -1,6 +1,6 @@
-package sample;
+package gui;
 
-import javafx.application.Application;
+import algorithm.SobelGradient;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -12,13 +12,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.opencv.core.Core;
-import sample.opencvsample.SobelGradient;
 
-import java.io.ByteArrayInputStream;
 import java.net.URISyntaxException;
 
-public class SobelGradientGui extends Application {
+public class SobelGradientGui extends AbstractGUI {
 
     static String currentImage = "dog";
 
@@ -40,7 +37,7 @@ public class SobelGradientGui extends Application {
         primaryStage.setHeight(700);
         primaryStage.setWidth(1200);
 
-        Image img = new Image(new ByteArrayInputStream(SobelGradient.execute("src/sample/" + currentImage +".jpg", 0, 1, 1, 1, 1, 50, 255).toArray()));
+        Image img = createImage(SobelGradient.execute(PATH_TO_IMAGES + currentImage + ".jpg", 0, 1, 1, 1, 1, 50, 255));
 
         imageViewOrigin = new ImageView(new Image(getClass().getResource("dog.jpg").toURI().toString()));
         imageView = new ImageView(img);
@@ -66,7 +63,7 @@ public class SobelGradientGui extends Application {
                 double delta = Double.valueOf(deltaField.getText());
                 double scale = Double.valueOf(scaleField.getText());
 
-                Image img = new Image(new ByteArrayInputStream(SobelGradient.execute("src/sample/" + currentImage +".jpg", xOrder, yOrder, kSize, delta, scale, lBr, hBr).toArray()));
+                Image img = createImage(SobelGradient.execute(PATH_TO_IMAGES + currentImage +".jpg", xOrder, yOrder, kSize, delta, scale, lBr, hBr));
                 imageView.setImage(img);
             }
         });
@@ -100,7 +97,7 @@ public class SobelGradientGui extends Application {
             @Override
             public void handle(ActionEvent event) {
                 currentImage = imageName;
-                Image img = new Image(new ByteArrayInputStream(SobelGradient.execute("src/sample/" + imageName +".jpg", 0, 1, 1, 1, 1, 50, 255).toArray()));
+                Image img = createImage(SobelGradient.execute(PATH_TO_IMAGES + imageName + ".jpg", 0, 1, 1, 1, 1, 50, 255));
                 imageView.setImage(img);
                 try {
                     imageViewOrigin.setImage(new Image(getClass().getResource(imageName + ".jpg").toURI().toString()));
@@ -110,10 +107,5 @@ public class SobelGradientGui extends Application {
             }
         });
         return button;
-    }
-
-    public static void main(String[] args) {
-        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-        launch(args);
     }
 }

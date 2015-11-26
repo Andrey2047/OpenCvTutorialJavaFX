@@ -1,19 +1,17 @@
-package sample;
+package gui;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.opencv.core.Core;
-import sample.opencvsample.HoughLinesDetector;
+import algorithm.HoughDetector;
 
 import java.io.ByteArrayInputStream;
 import java.net.URISyntaxException;
@@ -21,15 +19,16 @@ import java.net.URISyntaxException;
 /**
  * Created by andriiko on 11/25/2015.
  */
-public class HoughLinesDetectorGUI extends Application {
+public class HoughCirclesDetectorGUI extends AbstractGUI {
 
     static String currentImage = "dog";
 
-    static TextField rhoField;
-    static TextField thetaField;
-    static TextField thresholdField;
-    static TextField srnField;
-    static TextField stnField;
+    static TextField dpField;
+    static TextField minDistField;
+    static TextField param1Field;
+    static TextField param2Field;
+    static TextField minRadiusField;
+    static TextField maxRadiusField;
 
     static ImageView imageView;
     static ImageView imageViewOrigin;
@@ -40,31 +39,31 @@ public class HoughLinesDetectorGUI extends Application {
         primaryStage.setHeight(700);
         primaryStage.setWidth(1200);
 
-        Image img = new Image(new ByteArrayInputStream(HoughLinesDetector.execute("src/sample/" + currentImage + ".jpg", 1, Math.PI / 180, 50, 50, 10).toArray()));
+        Image img = createImage(HoughDetector.detectCircles(PATH_TO_IMAGES + currentImage + ".jpg", 1, 1, 1, 2, 1, 2));
 
         imageViewOrigin = new ImageView(new Image(getClass().getResource("dog.jpg").toURI().toString()));
         imageView = new ImageView(img);
 
-        rhoField = new TextField("1");
-        thetaField = new TextField("1");
-        thresholdField = new TextField("3");
+        dpField = new TextField("1");
+        minDistField = new TextField("1");
+        param1Field = new TextField("3");
 
-        srnField = new TextField("1");
-        stnField = new TextField("1");
+        param2Field = new TextField("1");
+        minRadiusField = new TextField("1");
+        maxRadiusField = new TextField("1");
 
         Button refreshButton = new Button("refresh");
         refreshButton.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
             public void handle(ActionEvent event) {
-                double rho = Double.valueOf(rhoField.getText());
-                double theta = Double.valueOf(thetaField.getText());
-                int threshold = Integer.valueOf(thresholdField.getText());
-                double srn = Double.valueOf(srnField.getText());
-                double stn = Double.valueOf(stnField.getText());
-
-
-                Image img = new Image(new ByteArrayInputStream(HoughLinesDetector.execute("src/sample/" + currentImage + ".jpg", rho, theta, threshold, srn, stn).toArray()));
+                double rho = Double.valueOf(dpField.getText());
+                double minDist = Double.valueOf(minDistField.getText());
+                double thresholdL = Integer.valueOf(param1Field.getText());
+                double thresholdH = Integer.valueOf(param2Field.getText());
+                int minR = Integer.valueOf(minRadiusField.getText());
+                int maxR = Integer.valueOf(maxRadiusField.getText());
+                Image img = createImage(HoughDetector.detectCircles(PATH_TO_IMAGES + currentImage + ".jpg", rho, minDist, thresholdL, thresholdH, minR, maxR));
                 imageView.setImage(img);
             }
         });
@@ -75,15 +74,16 @@ public class HoughLinesDetectorGUI extends Application {
         HBox hBox4 = new HBox();
         HBox hBox5 = new HBox();
 
+
         hBox0.getChildren().addAll(imageViewOrigin, imageView );
-        hBox1.getChildren().addAll(new Label("rhoField"), rhoField, new Label("thetaField"), thetaField);
-        hBox3.getChildren().addAll(new Label("threshold"), thresholdField, new Label("srn"), srnField);
-        hBox4.getChildren().addAll(new Label("stn"), stnField, refreshButton);
-        hBox5.getChildren().addAll(createImageButton("dog"), createImageButton("hand"), createImageButton("car"), createImageButton("triangle"));
+        hBox1.getChildren().addAll(new Label("dpField"), dpField, new Label("minDistField"), minDistField);
+        hBox3.getChildren().addAll(new Label("param1"), param1Field, new Label("param2"), param2Field);
+        hBox4.getChildren().addAll(new Label("minRadius"), minRadiusField, new Label("maxRadius"), maxRadiusField, refreshButton);
+        hBox5.getChildren().addAll(createImageButton("circles"), createImageButton("circles2"), createImageButton("circles3"));
 
         root.getChildren().addAll(hBox0, hBox1, hBox3, hBox4, hBox5);
 
-        primaryStage.setTitle("Hough Alg");
+        primaryStage.setTitle("Hough Circles Alg");
         primaryStage.setScene(new Scene(root, 300, 275));
         primaryStage.show();
     }
@@ -95,7 +95,7 @@ public class HoughLinesDetectorGUI extends Application {
             @Override
             public void handle(ActionEvent event) {
                 currentImage = imageName;
-                Image img = new Image(new ByteArrayInputStream(HoughLinesDetector.execute("src/sample/" + currentImage + ".jpg", 1, 1, 1, 1, 1).toArray()));
+                Image img = createImage(HoughDetector.detectCircles(PATH_TO_IMAGES + currentImage + ".jpg", 1, 1, 1, 2, 1, 2));
                 imageView.setImage(img);
                 try {
                     imageViewOrigin.setImage(new Image(getClass().getResource(imageName + ".jpg").toURI().toString()));
@@ -107,10 +107,6 @@ public class HoughLinesDetectorGUI extends Application {
         return button;
     }
 
-    public static void main(String[] args) {
-        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-        launch(args);
-    }
 }
 
 

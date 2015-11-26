@@ -1,22 +1,18 @@
-package sample.opencvsample;
+package algorithm;
 
 import org.opencv.core.*;
 import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 
-import static java.lang.Math.cos;
-import static java.lang.Math.round;
-import static java.lang.Math.sin;
-import static org.opencv.core.Core.convertScaleAbs;
 import static org.opencv.highgui.Highgui.imread;
-import static org.opencv.imgproc.Imgproc.*;
+import static org.opencv.imgproc.Imgproc.HoughLinesP;
 
 /**
  * Created by andriiko on 11/25/2015.
  */
-public class HoughLinesDetector {
+public class HoughCirclesDetector {
 
-    public static MatOfByte execute(String imageUrl, double rho, double theta, int threshold, double srn, double stn){
+    public static Mat execute(String imageUrl, double rho, double theta, int threshold, double srn, double stn){
         Mat image = imread(imageUrl, 1);//CommonService.binarizeImage(imgUrl, lowBrightness, highBrightness);
         Mat dst = image.clone();
         Mat grayedImage = new Mat();
@@ -48,9 +44,7 @@ public class HoughLinesDetector {
               Core.line(dst, pt1, pt2, new Scalar(0, 0, 255), 2);
         }
 
-        MatOfByte matOfByte = new MatOfByte();
-        Highgui.imencode(".jpg", dst, matOfByte);
-        return matOfByte;
+        return dst;
     }
 
     private static double pointDistance(Point p1, Point p2) {

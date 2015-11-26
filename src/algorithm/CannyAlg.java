@@ -1,4 +1,4 @@
-package sample.opencvsample;
+package algorithm;
 
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -16,7 +16,7 @@ import static org.opencv.imgproc.Imgproc.cvtColor;
  */
 public class CannyAlg {
 
-    public static MatOfByte execute(String imageUrl, double threshold1, double threshold2, int apertureSize, boolean L2gradient){
+    public static Mat execute(String imageUrl, double threshold1, double threshold2, int apertureSize, boolean L2gradient){
         Mat image = imread(imageUrl, 1);
         Mat grayedImage = image.clone();
         cvtColor(image, grayedImage, Imgproc.COLOR_RGB2GRAY);
@@ -24,8 +24,6 @@ public class CannyAlg {
         Canny(image, contours, threshold1, threshold2, apertureSize, L2gradient);
         Mat diffContours = contours.clone();
         Sobel(contours, diffContours, CvType.CV_16S, 1, 1, 3 , 1, 1);
-        MatOfByte matOfByte = new MatOfByte();
-        Highgui.imencode(".jpg", diffContours, matOfByte);
-        return matOfByte;
+        return diffContours;
     }
 }

@@ -1,4 +1,4 @@
-package sample.opencvsample;
+package algorithm;
 
 import org.bytedeco.javacpp.FloatPointer;
 import org.opencv.core.*;
@@ -36,19 +36,12 @@ public class Convolution {
                     0.1f, 0.5f, 0.1f,
                     -0.1f, 0.1f, -0.1f,};
 
-    public static MatOfByte filterImage(String imagePath, float [] cKernel){
+    public static Mat filterImage(String imagePath, float [] cKernel){
         Mat image = imread(imagePath, 1);
         Mat dst = image.clone();
         Mat mat = new MatOfFloat(cKernel);
 
         filter2D(image, dst, CvType.CV_32F , mat);
-        MatOfByte matOfByte = new MatOfByte();
-        Highgui.imencode(".jpg", dst, matOfByte);
-        return matOfByte;
-    }
-
-    public static void main(String[] args) {
-        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-        filterImage("C:/edu/courses/image recognition/test_data/dog.jpg", CONVOLUTION_KERNEL);
+        return dst;
     }
 }
