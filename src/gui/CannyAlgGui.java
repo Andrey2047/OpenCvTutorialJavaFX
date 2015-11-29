@@ -1,6 +1,6 @@
 package gui;
 
-import javafx.application.Application;
+import algorithm.CommonService;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -16,7 +16,6 @@ import org.opencv.core.Core;
 import algorithm.CannyAlg;
 import algorithm.SobelGradient;
 
-import java.io.ByteArrayInputStream;
 import java.net.URISyntaxException;
 
 /**
@@ -42,7 +41,7 @@ public class CannyAlgGui extends AbstractGUI {
 
         Image img = createImage(SobelGradient.execute(PATH_TO_IMAGES + currentImage + ".jpg", 0, 1, 1, 1, 1, 50, 255));
 
-        imageViewOrigin = new ImageView(new Image(getClass().getResource("dog.jpg").toURI().toString()));
+        imageViewOrigin = new ImageView(createImage(CommonService.getImageArray(PATH_TO_IMAGES + currentImage + ".jpg")));
         imageView = new ImageView(img);
 
         threshold1 = new TextField("1");
@@ -101,4 +100,8 @@ public class CannyAlgGui extends AbstractGUI {
         return button;
     }
 
+    public static void main(String[] args) {
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+        launch(args);
+    }
 }

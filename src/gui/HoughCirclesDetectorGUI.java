@@ -1,5 +1,6 @@
 package gui;
 
+import algorithm.CommonService;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -15,6 +16,8 @@ import algorithm.HoughDetector;
 
 import java.io.ByteArrayInputStream;
 import java.net.URISyntaxException;
+
+import static algorithm.CommonService.getImageArray;
 
 /**
  * Created by andriiko on 11/25/2015.
@@ -41,7 +44,7 @@ public class HoughCirclesDetectorGUI extends AbstractGUI {
 
         Image img = createImage(HoughDetector.detectCircles(PATH_TO_IMAGES + currentImage + ".jpg", 1, 1, 1, 2, 1, 2));
 
-        imageViewOrigin = new ImageView(new Image(getClass().getResource("dog.jpg").toURI().toString()));
+        imageViewOrigin = new ImageView(createImage(getImageArray(PATH_TO_IMAGES + currentImage + ".jpg")));
         imageView = new ImageView(img);
 
         dpField = new TextField("1");
@@ -97,16 +100,15 @@ public class HoughCirclesDetectorGUI extends AbstractGUI {
                 currentImage = imageName;
                 Image img = createImage(HoughDetector.detectCircles(PATH_TO_IMAGES + currentImage + ".jpg", 1, 1, 1, 2, 1, 2));
                 imageView.setImage(img);
-                try {
-                    imageViewOrigin.setImage(new Image(getClass().getResource(imageName + ".jpg").toURI().toString()));
-                } catch (URISyntaxException e) {
-                    e.printStackTrace();
-                }
+                imageViewOrigin.setImage(createImage(getImageArray(PATH_TO_IMAGES + currentImage + ".jpg")));
             }
         });
         return button;
     }
 
+    public static void main(String[] args) {
+        launch(args);
+    }
 }
 
 

@@ -2,8 +2,6 @@ package algorithm;
 
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfByte;
-import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 
 import static org.opencv.highgui.Highgui.imread;

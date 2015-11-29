@@ -1,7 +1,9 @@
 package algorithm;
 
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
+import org.opencv.core.Scalar;
 import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 
@@ -14,21 +16,21 @@ import static org.opencv.imgproc.Imgproc.threshold;
  */
 public class CommonService {
 
-    public static Mat binarizeImage(String imagePath, int lowBorder, int highBorder){
-        Mat image = imread(imagePath, 1);
-        Mat imageGray = image.clone();
-        Mat dst = image.clone();
-
-        cvtColor(image, imageGray, Imgproc.COLOR_RGB2GRAY);
-        threshold(imageGray, dst, lowBorder, highBorder, Imgproc.THRESH_BINARY);
-
+    public static Mat binarizeImage(Mat image, int lowBorder, int highBorder){
+        Mat dst = new Mat();
+        Mat gray = new Mat();
+        cvtColor(image, gray, Imgproc.COLOR_RGB2GRAY);
+        Core.inRange(gray, new Scalar(lowBorder), new Scalar(highBorder), dst);
         return dst;
     }
 
     public static MatOfByte convertToMatOfByte(Mat mat){
-        MatOfByte dst = new MatOfByte();
         MatOfByte matOfByte = new MatOfByte();
-        Highgui.imencode(".jpg", dst, matOfByte);
+        Highgui.imencode(".jpg", mat, matOfByte);
         return matOfByte;
+    }
+
+    public static Mat getImageArray(String imgUrl){
+        return imread(imgUrl, 1);
     }
 }

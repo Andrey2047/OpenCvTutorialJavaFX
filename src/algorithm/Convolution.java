@@ -1,8 +1,6 @@
 package algorithm;
 
-import org.bytedeco.javacpp.FloatPointer;
 import org.opencv.core.*;
-import org.opencv.highgui.Highgui;
 
 import static org.opencv.highgui.Highgui.imread;
 import static org.opencv.imgproc.Imgproc.filter2D;

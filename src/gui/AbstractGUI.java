@@ -14,9 +14,11 @@ import java.io.ByteArrayInputStream;
 public abstract class AbstractGUI extends Application {
 
     public static final String PATH_TO_IMAGES = "src/resources/images/";
+    static {
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+    }
 
     public static void main(String[] args) {
-        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
         launch(args);
     }
 
