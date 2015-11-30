@@ -1,6 +1,7 @@
 package gui;
 
 import algorithm.CommonService;
+import algorithm.FindContours;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
@@ -13,39 +14,56 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
 
+import static algorithm.CommonService.binarizeImage;
 import static algorithm.CommonService.getImageArray;
+import static algorithm.FindContours.findCircles;
+import static algorithm.FindContours.findContours;
+import static algorithm.FindContours.plotContours;
 
 /**
  * Created by Samsung on 11/29/2015.
  */
 public class FindContoursGUI extends AbstractGUI {
 
-    static String currentImage = "dog";
+    static String currentImage = "shapes";
 
     static Slider lowBinaryLevel;
     static Slider highBinaryLevel;
 
     static ImageView binarizedImageView;
+    static ImageView imageWithContours;
+    static ImageView imageWithShapes;
     static ImageView imageViewOrigin;
+
+    static Mat binarizedImageMat;
 
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         //Core.inRange();
-        HBox root = new HBox();
+        VBox root = new VBox();
         primaryStage.setHeight(700);
         primaryStage.setWidth(1200);
 
+        HBox row1 = new HBox();
+        HBox row2 = new HBox();
+
         Mat imageArray = getImageArray(PATH_TO_IMAGES + currentImage + ".jpg");
         imageViewOrigin = new ImageView(createImage(imageArray));
-        binarizedImageView = new ImageView(createImage(CommonService.binarizeImage(imageArray, 40, 140)));
+        binarizedImageMat = binarizeImage(imageArray, 40, 140);
+        binarizedImageView = new ImageView(createImage(binarizedImageMat));
         lowBinaryLevel = createBinarSlider();
         highBinaryLevel = createBinarSlider();
+
         VBox binarizedImageHBox = new VBox();
         binarizedImageHBox.getChildren().addAll(binarizedImageView, lowBinaryLevel, highBinaryLevel);
 
-        root.getChildren().addAll(imageViewOrigin, binarizedImageHBox);
+        row1.getChildren().addAll(imageViewOrigin, binarizedImageHBox);
 
+        imageWithContours = new ImageView(createImage(plotContours(findContours(binarizedImageMat, 0, 0), imageArray)));
+        imageWithShapes = new ImageView(createImage(plotContours(findCircles(binarizedImageMat, 0, 0), imageArray, "circles")));
+        row2.getChildren().addAll(imageWithContours, imageWithShapes);
+        root.getChildren().addAll(row1, row2);
         primaryStage.setTitle("Canny Alg");
         primaryStage.setScene(new Scene(root, 300, 275));
         primaryStage.show();
@@ -65,7 +83,10 @@ public class FindContoursGUI extends AbstractGUI {
             public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
                 int lowLevel = (int) lowBinaryLevel.getValue();
                 int highLevel = (int) highBinaryLevel.getValue();
-                binarizedImageView.setImage(createImage(CommonService.binarizeImage(getImageArray(PATH_TO_IMAGES + currentImage + ".jpg"), lowLevel, highLevel)));
+                binarizedImageMat = binarizeImage(getImageArray(PATH_TO_IMAGES + currentImage + ".jpg"), lowLevel, highLevel);
+                binarizedImageView.setImage(createImage(binarizedImageMat));
+                imageWithContours.setImage(createImage(plotContours(findContours(binarizedImageMat, 0, 0), getImageArray(PATH_TO_IMAGES + currentImage + ".jpg"))));
+                imageWithShapes.setImage(createImage(plotContours(findCircles(binarizedImageMat, 0, 0), getImageArray(PATH_TO_IMAGES + currentImage + ".jpg"), "circle")));
             }
         });
         return slider;
