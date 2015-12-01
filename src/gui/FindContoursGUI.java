@@ -12,13 +12,16 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
 import org.opencv.imgproc.Imgproc;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static algorithm.CommonService.binarizeImage;
 import static algorithm.CommonService.getImageArray;
-import static algorithm.FindContours.findCircles;
-import static algorithm.FindContours.findContours;
-import static algorithm.FindContours.plotContours;
+import static algorithm.FindContours.*;
 
 /**
  * Created by Samsung on 11/29/2015.
@@ -61,7 +64,7 @@ public class FindContoursGUI extends AbstractGUI {
         row1.getChildren().addAll(imageViewOrigin, binarizedImageHBox);
 
         imageWithContours = new ImageView(createImage(plotContours(findContours(binarizedImageMat, 0, 0), imageArray)));
-        imageWithShapes = new ImageView(createImage(plotContours(findCircles(binarizedImageMat, 0, 0), imageArray, "circles")));
+        imageWithShapes = new ImageView(createImage(plotContours(findCircles(binarizedImageMat, 0, 0), imageArray)));
         row2.getChildren().addAll(imageWithContours, imageWithShapes);
         root.getChildren().addAll(row1, row2);
         primaryStage.setTitle("Canny Alg");
@@ -86,7 +89,10 @@ public class FindContoursGUI extends AbstractGUI {
                 binarizedImageMat = binarizeImage(getImageArray(PATH_TO_IMAGES + currentImage + ".jpg"), lowLevel, highLevel);
                 binarizedImageView.setImage(createImage(binarizedImageMat));
                 imageWithContours.setImage(createImage(plotContours(findContours(binarizedImageMat, 0, 0), getImageArray(PATH_TO_IMAGES + currentImage + ".jpg"))));
-                imageWithShapes.setImage(createImage(plotContours(findCircles(binarizedImageMat, 0, 0), getImageArray(PATH_TO_IMAGES + currentImage + ".jpg"), "circle")));
+                Map<String, List<MatOfPoint>> shapeContours = new HashMap<>();
+                shapeContours.put("triangle", findTriangles(binarizedImageMat, 0, 0));
+                shapeContours.put("cirlce", findCircles(binarizedImageMat, 0, 0));
+                imageWithShapes.setImage(createImage(plotContours(shapeContours, getImageArray(PATH_TO_IMAGES + currentImage + ".jpg"))));
             }
         });
         return slider;
