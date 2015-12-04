@@ -18,12 +18,19 @@ public class BlurFilters {
         return dst;
     }
 
-    public static Mat medianBlur(){
-        return new Mat();
+    public static Mat medianBlur(String imageUrl, int kSize){
+        Mat img = imread(imageUrl, 1);
+        Mat dst = new Mat();
+        Imgproc.medianBlur(img, dst, kSize);
+        return dst;
     }
 
-    public static Mat bilateralBlur(){
-        return new Mat();
+    public static Mat bilateralBlur(String imageUrl, double sigmaColor, double sigmaSpace){
+
+        Mat img = imread(imageUrl, 1);
+        Mat dst = new Mat();
+        Imgproc.bilateralFilter(img, dst, -1, sigmaColor, sigmaSpace);
+        return dst;
     }
 
 
