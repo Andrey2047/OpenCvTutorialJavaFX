@@ -1,5 +1,6 @@
 package gui;
 
+import algorithm.ThresholdAlg;
 import javafx.collections.FXCollections;
 import javafx.event.EventType;
 import javafx.scene.Node;
@@ -13,26 +14,24 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.opencv.core.Mat;
-import org.opencv.imgproc.Imgproc;
-
 
 import static algorithm.CommonService.getImageArray;
-import static algorithm.MorphologicalTransformationFunction.dialate;
 import static algorithm.MorphologicalTransformationFunction.erode;
+import static algorithm.ThresholdAlg.threshold;
 
 /**
  * Created by Samsung on 12/8/2015.
  */
-public class ErodeGui extends AbstractGUI {
+public class ThresholdGUI extends AbstractGUI {
 
-    public static final String CURRENT_IMAGE = PATH_TO_IMAGES + "text/text1" + ".bmp";
+    public static final String CURRENT_IMAGE = PATH_TO_IMAGES + "car" + ".jpg";
 
-    static ChoiceBox erodeShapeBox;
-    static TextField kSizeField;
-    static Slider iterationNumberField;
+    static ChoiceBox thresholdTYpe;
+    static TextField maxValueField;
+    static Slider thresholdValue;
 
     static ImageView originalImageView;
-    static ImageView erodedImageView;
+    static ImageView thresholdImageView;
 
 
     @Override
@@ -44,19 +43,21 @@ public class ErodeGui extends AbstractGUI {
         HBox row1 = new HBox();
         HBox row2 = new HBox();
 
-        erodeShapeBox = new ChoiceBox(FXCollections.observableArrayList("MORPH_RECT", "MORPH_ELLIPSE"));
-        erodeShapeBox.setValue("MORPH_RECT");
-        erodeShapeBox.addEventFilter(EventType.ROOT, event -> refreshErodeImage());
-        kSizeField = new TextField("3");
-        kSizeField.addEventHandler(EventType.ROOT, e -> refreshErodeImage());
-        iterationNumberField = createSlider(0,10);
+        thresholdTYpe = new ChoiceBox(FXCollections.observableArrayList("0", "1", "2", "3", "4"));
+        thresholdTYpe.setValue("0");
+
+        thresholdTYpe.addEventHandler(EventType.ROOT, event -> refreshErodeImage());
+        maxValueField = new TextField("255");
+        maxValueField.addEventHandler(EventType.ROOT, e -> refreshErodeImage());
+        thresholdValue = createSlider(0,255);
 
         originalImageView = new ImageView(createImage(getImageArray(CURRENT_IMAGE)));
-        erodedImageView = new ImageView(createImage(erode(getImageArray(CURRENT_IMAGE), 0, 3, 1)));
+        thresholdImageView = new ImageView(createImage(threshold(getImageArray(CURRENT_IMAGE), 40, 255, 0)));
 
         VBox imageVbox = new VBox();
-        imageVbox.getChildren().addAll(erodedImageView, createHbox(new Label("ksize"), kSizeField),
-                createHbox(new Label("iteration"), iterationNumberField), createHbox(new Label("shape"), erodeShapeBox));
+        imageVbox.getChildren().addAll(thresholdImageView, createHbox(new Label("maxValue"), maxValueField),
+                createHbox(new Label("value"), thresholdValue),
+                createHbox(new Label("type"), thresholdTYpe));
 
         row1.getChildren().addAll(originalImageView, imageVbox);
         root.getChildren().addAll(row1);
@@ -65,7 +66,7 @@ public class ErodeGui extends AbstractGUI {
         stage.show();
     }
 
-    private HBox createHbox(Node ... nodes) {
+    private HBox createHbox(Node... nodes) {
         HBox hbox = new HBox();
         hbox.getChildren().addAll(nodes);
         return hbox;
@@ -82,12 +83,13 @@ public class ErodeGui extends AbstractGUI {
     }
 
     private void refreshErodeImage(){
-        int kSize = Integer.valueOf(kSizeField.getText());
-        int iterationNumber = (int)(iterationNumberField.getValue());
-        int shape = "MORPH_RECT".equals(erodeShapeBox.getValue()) ? 0 : 1;
-        Mat filteredImage = erode(getImageArray(CURRENT_IMAGE), shape, kSize, iterationNumber);
-        Mat erodeImg = dialate(filteredImage, shape, kSize, iterationNumber);
-        erodedImageView.setImage(createImage(erodeImg));
+        int maxValue = Integer.valueOf(maxValueField.getText());
+        int thValue = (int)(thresholdValue.getValue());
+        int type = Integer.valueOf(thresholdTYpe.getValue().toString());
+
+        Mat imageArray = getImageArray(CURRENT_IMAGE);//CannyAlg.execute(CURRENT_IMAGE, 10, 100, 3, true);
+        Mat filteredImage = threshold(imageArray, thValue, maxValue, type);
+        thresholdImageView.setImage(createImage(filteredImage));
     }
 
     public static void main(String[] args) {
