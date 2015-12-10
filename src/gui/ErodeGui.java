@@ -65,12 +65,6 @@ public class ErodeGui extends AbstractGUI {
         stage.show();
     }
 
-    private HBox createHbox(Node ... nodes) {
-        HBox hbox = new HBox();
-        hbox.getChildren().addAll(nodes);
-        return hbox;
-    }
-
     private Slider createSlider(int min, int max) {
         Slider slider = new Slider();
         slider.setMin(min);

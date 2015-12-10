@@ -2,6 +2,7 @@ package gui;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventType;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
@@ -83,6 +84,8 @@ public class ImageBrightnessTransformingGUI extends AbstractGUI {
         });
         return sli;
     }
+
+
 
     public static void main(String[] args) {
         launch(args);

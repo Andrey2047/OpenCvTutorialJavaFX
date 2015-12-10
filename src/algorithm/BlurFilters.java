@@ -18,6 +18,12 @@ public class BlurFilters {
         return dst;
     }
 
+    public static Mat simpleBlur(Mat image){
+        Mat dst = new Mat();
+        Imgproc.blur(image, dst, new Size(3, 3));
+        return dst;
+    }
+
     public static Mat medianBlur(String imageUrl, int kSize){
         Mat img = imread(imageUrl, 1);
         Mat dst = new Mat();

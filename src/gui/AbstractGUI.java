@@ -2,7 +2,9 @@ package gui;
 
 import algorithm.CommonService;
 import javafx.application.Application;
+import javafx.scene.Node;
 import javafx.scene.image.Image;
+import javafx.scene.layout.HBox;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 
@@ -25,5 +27,12 @@ public abstract class AbstractGUI extends Application {
     public static Image createImage(Mat mat){
         return new Image(new ByteArrayInputStream(CommonService.convertToMatOfByte(mat).toArray()));
     }
+
+    HBox createHbox(Node... nodes) {
+        HBox hbox = new HBox();
+        hbox.getChildren().addAll(nodes);
+        return hbox;
+    }
+
 
 }

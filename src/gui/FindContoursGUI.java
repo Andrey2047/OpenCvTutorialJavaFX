@@ -1,7 +1,5 @@
 package gui;
 
-import algorithm.CommonService;
-import algorithm.FindContours;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
@@ -10,10 +8,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
-import org.opencv.imgproc.Imgproc;
+import org.opencv.core.Scalar;
 
 import java.util.HashMap;
 import java.util.List;
@@ -63,8 +60,8 @@ public class FindContoursGUI extends AbstractGUI {
 
         row1.getChildren().addAll(imageViewOrigin, binarizedImageHBox);
 
-        imageWithContours = new ImageView(createImage(plotContours(findContours(binarizedImageMat, 0, 0), imageArray)));
-        imageWithShapes = new ImageView(createImage(plotContours(findCircles(binarizedImageMat, 0, 0), imageArray)));
+        imageWithContours = new ImageView(createImage(plotContours(findContours(binarizedImageMat, 0, 0), imageArray, new Scalar(255, 255, 0))));
+        imageWithShapes = new ImageView(createImage(plotContours(findCircles(binarizedImageMat, 0, 0), imageArray, new Scalar(255, 255, 0))));
         row2.getChildren().addAll(imageWithContours, imageWithShapes);
         root.getChildren().addAll(row1, row2);
         primaryStage.setTitle("Canny Alg");
@@ -88,7 +85,7 @@ public class FindContoursGUI extends AbstractGUI {
                 int highLevel = (int) highBinaryLevel.getValue();
                 binarizedImageMat = binarizeImage(getImageArray(PATH_TO_IMAGES + currentImage + ".jpg"), lowLevel, highLevel);
                 binarizedImageView.setImage(createImage(binarizedImageMat));
-                imageWithContours.setImage(createImage(plotContours(findContours(binarizedImageMat, 0, 0), getImageArray(PATH_TO_IMAGES + currentImage + ".jpg"))));
+                imageWithContours.setImage(createImage(plotContours(findContours(binarizedImageMat, 0, 0), getImageArray(PATH_TO_IMAGES + currentImage + ".jpg"), new Scalar(255, 255, 0))));
                 Map<String, List<MatOfPoint>> shapeContours = new HashMap<>();
                 shapeContours.put("triangle", findTriangles(binarizedImageMat, 0, 0));
                 shapeContours.put("cirlce", findCircles(binarizedImageMat, 0, 0));

@@ -2,12 +2,11 @@ package algorithm;
 
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import static org.opencv.highgui.Highgui.imread;
-import static org.opencv.imgproc.Imgproc.Canny;
-import static org.opencv.imgproc.Imgproc.Sobel;
-import static org.opencv.imgproc.Imgproc.cvtColor;
+import static org.opencv.imgproc.Imgproc.*;
 
 /**
  * Created by andriiko on 11/25/2015.
@@ -18,6 +17,7 @@ public class CannyAlg {
         Mat image = imread(imageUrl, 1);
         Mat grayedImage = image.clone();
         cvtColor(image, grayedImage, Imgproc.COLOR_RGB2GRAY);
+        blur(grayedImage, grayedImage, new Size(3, 3));
         Mat contours = grayedImage.clone();
         Canny(image, contours, threshold1, threshold2, apertureSize, L2gradient);
         Mat diffContours = contours.clone();

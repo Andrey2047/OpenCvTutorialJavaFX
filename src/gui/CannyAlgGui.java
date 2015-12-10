@@ -72,7 +72,7 @@ public class CannyAlgGui extends AbstractGUI {
         hBox0.getChildren().addAll(imageViewOrigin, imageView );
         hBox1.getChildren().addAll(new Label("threshold1"), threshold1, new Label("threshold2"), threshold2);
         hBox3.getChildren().addAll(new Label("appertureSize"), appertureSize, refreshButton);
-        hBox5.getChildren().addAll(createImageButton("dog"), createImageButton("hand"), createImageButton("car"));
+        hBox5.getChildren().addAll(createImageButton("house"), createImageButton("hand"), createImageButton("car"));
 
         root.getChildren().addAll(hBox0, hBox1, hBox3, hBox5);
 

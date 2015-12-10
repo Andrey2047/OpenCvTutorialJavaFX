@@ -4,9 +4,7 @@ import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.opencv.imgproc.Imgproc.*;
 
@@ -19,6 +17,22 @@ public class FindContours {
         List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
         Imgproc.findContours(image, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
         return contours;
+    }
+
+    public static MatOfInt findConvexHull(MatOfPoint contour){
+        MatOfInt chain = new MatOfInt();
+        Imgproc.convexHull(contour, chain, true);
+        return chain;
+    }
+
+    public static List<MatOfPoint> findConvexHull(List<MatOfPoint> contours){
+        List<MatOfPoint> toReturn = new ArrayList<>();
+        for(MatOfPoint matOfPoint: contours){
+            MatOfInt convexHull = findConvexHull(matOfPoint);
+            toReturn.add(hull2Points(convexHull, matOfPoint));
+        }
+
+        return toReturn;
     }
 
     public static List<MatOfPoint> findCircles(Mat image, int mode, int method){
@@ -54,10 +68,21 @@ public class FindContours {
         return toReturn;
     }
 
-    public static Mat plotContours(List<MatOfPoint> contours, Mat image){
+    public static Mat plotContours(List<MatOfPoint> contours, Mat image, Scalar color){
         Mat dst = image.clone();
-        Imgproc.drawContours(dst, contours, -1, new Scalar(0, 0, 255));
+        Imgproc.drawContours(dst, contours, -1, color);
         return dst;
+    }
+
+    static MatOfPoint hull2Points(MatOfInt hull, MatOfPoint contour) {
+        List<Integer> indexes = hull.toList();
+        List<Point> points = new ArrayList<>();
+        MatOfPoint point= new MatOfPoint();
+        for(Integer index:indexes) {
+            points.add(contour.toList().get(index));
+        }
+        point.fromList(points);
+        return point;
     }
 
     public static Mat plotContours(Map<String, List<MatOfPoint>> contoursMap, Mat image){
