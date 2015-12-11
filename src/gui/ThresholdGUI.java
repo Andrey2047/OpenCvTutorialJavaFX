@@ -1,9 +1,7 @@
 package gui;
 
-import algorithm.ThresholdAlg;
 import javafx.collections.FXCollections;
 import javafx.event.EventType;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -16,7 +14,6 @@ import javafx.stage.Stage;
 import org.opencv.core.Mat;
 
 import static algorithm.CommonService.getImageArray;
-import static algorithm.MorphologicalTransformationFunction.erode;
 import static algorithm.ThresholdAlg.threshold;
 
 /**
@@ -41,14 +38,13 @@ public class ThresholdGUI extends AbstractGUI {
         stage.setWidth(1200);
 
         HBox row1 = new HBox();
-        HBox row2 = new HBox();
 
         thresholdTYpe = new ChoiceBox(FXCollections.observableArrayList("0", "1", "2", "3", "4"));
         thresholdTYpe.setValue("0");
 
-        thresholdTYpe.addEventHandler(EventType.ROOT, event -> refreshErodeImage());
+        thresholdTYpe.addEventHandler(EventType.ROOT, event -> refreshAllImages());
         maxValueField = new TextField("255");
-        maxValueField.addEventHandler(EventType.ROOT, e -> refreshErodeImage());
+        maxValueField.addEventHandler(EventType.ROOT, e -> refreshAllImages());
         thresholdValue = createSlider(0,255);
 
         originalImageView = new ImageView(createImage(getImageArray(CURRENT_IMAGE)));
@@ -72,12 +68,12 @@ public class ThresholdGUI extends AbstractGUI {
         slider.setMin(min);
         slider.setMax(max);
         slider.addEventHandler(EventType.ROOT, event -> {
-            refreshErodeImage();
+            refreshAllImages();
         });
         return slider;
     }
 
-    private void refreshErodeImage(){
+    public void refreshAllImages(){
         int maxValue = Integer.valueOf(maxValueField.getText());
         int thValue = (int)(thresholdValue.getValue());
         int type = Integer.valueOf(thresholdTYpe.getValue().toString());

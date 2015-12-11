@@ -30,7 +30,6 @@ public class HoughLinesDetectorGUI extends AbstractGUI {
     static TextField stnField;
 
     static ImageView imageView;
-    static ImageView imageViewOrigin;
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -40,7 +39,7 @@ public class HoughLinesDetectorGUI extends AbstractGUI {
 
         Image img = createImage(HoughDetector.detectLines(PATH_TO_IMAGES + currentImage + ".jpg", 1, Math.PI / 180, 50, 50, 10));
 
-        imageViewOrigin = new ImageView(new Image(getClass().getResource("dog.jpg").toURI().toString()));
+        originalImage = new ImageView(new Image(getClass().getResource("dog.jpg").toURI().toString()));
         imageView = new ImageView(img);
 
         rhoField = new TextField("1");
@@ -84,7 +83,7 @@ public class HoughLinesDetectorGUI extends AbstractGUI {
         tb1.setToggleGroup(group);
 
 
-        hBox0.getChildren().addAll(imageViewOrigin, imageView );
+        hBox0.getChildren().addAll(originalImage, imageView );
         hBox1.getChildren().addAll(new Label("rhoField"), rhoField, new Label("thetaField"), thetaField);
         hBox3.getChildren().addAll(new Label("threshold"), thresholdField, new Label("srn"), srnField);
         hBox4.getChildren().addAll(new Label("stn"), stnField, refreshButton);
@@ -98,7 +97,7 @@ public class HoughLinesDetectorGUI extends AbstractGUI {
         primaryStage.show();
     }
 
-    private static Button createImageButton(final String imageName){
+    private Button createImageButton(final String imageName){
         Button button = new Button(imageName);
         button.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -108,7 +107,7 @@ public class HoughLinesDetectorGUI extends AbstractGUI {
                 Image img = createImage(HoughDetector.detectLines(PATH_TO_IMAGES + currentImage + ".jpg", 1, 1, 1, 1, 1));
                 imageView.setImage(img);
                 try {
-                    imageViewOrigin.setImage(new Image(getClass().getResource(imageName + ".jpg").toURI().toString()));
+                    originalImage.setImage(new Image(getClass().getResource(imageName + ".jpg").toURI().toString()));
                 } catch (URISyntaxException e) {
                     e.printStackTrace();
                 }
@@ -117,6 +116,10 @@ public class HoughLinesDetectorGUI extends AbstractGUI {
         return button;
     }
 
+    @Override
+    public void refreshAllImages() {
+
+    }
 }
 
 

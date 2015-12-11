@@ -29,7 +29,6 @@ public class SobelGradientGui extends AbstractGUI {
     static TextField deltaField;
     static TextField kSizeField;
     static ImageView imageView;
-    static ImageView imageViewOrigin;
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -39,7 +38,7 @@ public class SobelGradientGui extends AbstractGUI {
 
         Image img = createImage(SobelGradient.execute(PATH_TO_IMAGES + currentImage + ".jpg", 0, 1, 1, 1, 1, 50, 255));
 
-        imageViewOrigin = new ImageView(new Image(getClass().getResource("dog.jpg").toURI().toString()));
+        originalImage = new ImageView(new Image(getClass().getResource("dog.jpg").toURI().toString()));
         imageView = new ImageView(img);
 
         lowBrightness = new TextField("70");
@@ -76,7 +75,7 @@ public class SobelGradientGui extends AbstractGUI {
 
         HBox hBox5 = new HBox();
 
-        hBox0.getChildren().addAll(imageViewOrigin, imageView );
+        hBox0.getChildren().addAll(originalImage, imageView );
         hBox1.getChildren().addAll(new Label("xOrder"), xOrderField, new Label("yOrder"), yOrderField);
         hBox2.getChildren().addAll(new Label("lowBriLimit"), lowBrightness, new Label("hignBriLimit"), highBrightness);
         hBox3.getChildren().addAll(new Label("scale"), scaleField, new Label("delta"), deltaField);
@@ -90,7 +89,7 @@ public class SobelGradientGui extends AbstractGUI {
         primaryStage.show();
     }
 
-    private static Button createImageButton(final String imageName){
+    private Button createImageButton(final String imageName){
         Button button = new Button(imageName);
         button.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -100,12 +99,17 @@ public class SobelGradientGui extends AbstractGUI {
                 Image img = createImage(SobelGradient.execute(PATH_TO_IMAGES + imageName + ".jpg", 0, 1, 1, 1, 1, 50, 255));
                 imageView.setImage(img);
                 try {
-                    imageViewOrigin.setImage(new Image(getClass().getResource(imageName + ".jpg").toURI().toString()));
+                    originalImage.setImage(new Image(getClass().getResource(imageName + ".jpg").toURI().toString()));
                 } catch (URISyntaxException e) {
                     e.printStackTrace();
                 }
             }
         });
         return button;
+    }
+
+    @Override
+    public void refreshAllImages() {
+
     }
 }

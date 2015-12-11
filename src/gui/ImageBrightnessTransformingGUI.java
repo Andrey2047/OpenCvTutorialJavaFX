@@ -85,7 +85,10 @@ public class ImageBrightnessTransformingGUI extends AbstractGUI {
         return sli;
     }
 
+    @Override
+    public void refreshAllImages() {
 
+    }
 
     public static void main(String[] args) {
         launch(args);

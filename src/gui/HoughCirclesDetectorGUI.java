@@ -106,6 +106,11 @@ public class HoughCirclesDetectorGUI extends AbstractGUI {
         return button;
     }
 
+    @Override
+    public void refreshAllImages() {
+
+    }
+
     public static void main(String[] args) {
         launch(args);
     }

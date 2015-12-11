@@ -31,7 +31,6 @@ public class ErodeGui extends AbstractGUI {
     static TextField kSizeField;
     static Slider iterationNumberField;
 
-    static ImageView originalImageView;
     static ImageView erodedImageView;
 
 
@@ -46,19 +45,19 @@ public class ErodeGui extends AbstractGUI {
 
         erodeShapeBox = new ChoiceBox(FXCollections.observableArrayList("MORPH_RECT", "MORPH_ELLIPSE"));
         erodeShapeBox.setValue("MORPH_RECT");
-        erodeShapeBox.addEventFilter(EventType.ROOT, event -> refreshErodeImage());
+        erodeShapeBox.addEventFilter(EventType.ROOT, event -> refreshAllImages());
         kSizeField = new TextField("3");
-        kSizeField.addEventHandler(EventType.ROOT, e -> refreshErodeImage());
+        kSizeField.addEventHandler(EventType.ROOT, e -> refreshAllImages());
         iterationNumberField = createSlider(0,10);
 
-        originalImageView = new ImageView(createImage(getImageArray(CURRENT_IMAGE)));
+        originalImage = new ImageView(createImage(getImageArray(CURRENT_IMAGE)));
         erodedImageView = new ImageView(createImage(erode(getImageArray(CURRENT_IMAGE), 0, 3, 1)));
 
         VBox imageVbox = new VBox();
         imageVbox.getChildren().addAll(erodedImageView, createHbox(new Label("ksize"), kSizeField),
                 createHbox(new Label("iteration"), iterationNumberField), createHbox(new Label("shape"), erodeShapeBox));
 
-        row1.getChildren().addAll(originalImageView, imageVbox);
+        row1.getChildren().addAll(originalImage, imageVbox);
         root.getChildren().addAll(row1);
         stage.setTitle("Canny Alg");
         stage.setScene(new Scene(root, 300, 275));
@@ -70,12 +69,12 @@ public class ErodeGui extends AbstractGUI {
         slider.setMin(min);
         slider.setMax(max);
         slider.addEventHandler(EventType.ROOT, event -> {
-            refreshErodeImage();
+            refreshAllImages();
         });
         return slider;
     }
 
-    private void refreshErodeImage(){
+    public void refreshAllImages(){
         int kSize = Integer.valueOf(kSizeField.getText());
         int iterationNumber = (int)(iterationNumberField.getValue());
         int shape = "MORPH_RECT".equals(erodeShapeBox.getValue()) ? 0 : 1;

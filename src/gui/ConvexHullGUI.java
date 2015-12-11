@@ -5,7 +5,6 @@ import javafx.collections.FXCollections;
 import javafx.event.EventType;
 import javafx.scene.Scene;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.image.ImageView;
@@ -16,9 +15,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Scalar;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static algorithm.BlurFilters.simpleBlur;
@@ -30,11 +27,7 @@ import static algorithm.ThresholdAlg.threshold;
  */
 public class ConvexHullGUI extends AbstractGUI{
 
-    ComboBox imageList;
-
-    ImageView originalIm;
     ImageView blurIm;
-
     ImageView thresholdIm;
 
     Slider thresholdValueField;
@@ -44,12 +37,7 @@ public class ConvexHullGUI extends AbstractGUI{
     ImageView contoursIm;
     ImageView convexHullIm;
 
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-        VBox root = new VBox();
-        primaryStage.setHeight(700);
-        primaryStage.setWidth(1200);
-
+    public void prepareStart() throws Exception {
         HBox row1 = new HBox();
         HBox row2 = new HBox();
         row2.setSpacing(20);
@@ -70,7 +58,7 @@ public class ConvexHullGUI extends AbstractGUI{
         populateImageViews();
         row1.getChildren().add(imageList);
 
-        row2.getChildren().addAll(originalIm, blurIm);
+        row2.getChildren().addAll(originalImage, blurIm);
 
         VBox thImageVbox = new VBox();
         thImageVbox.getChildren().addAll(thresholdIm, createHbox(new Label("maxValue"), thresholdMaxValueField),
@@ -79,17 +67,12 @@ public class ConvexHullGUI extends AbstractGUI{
 
         row3.getChildren().addAll(thImageVbox, contoursIm);
         row3.getChildren().addAll(convexHullIm);
-        root.getChildren().addAll(row1, row2, row3, row4);
-
-
-        primaryStage.setTitle("Convex Hull Alg");
-        primaryStage.setScene(new Scene(root, 300, 275));
-        primaryStage.show();
+        addRow(row1, row2, row3, row4);
     }
 
     private void populateImageViews() {
         Mat imageArray = getImageArray(PATH_TO_IMAGES + imageList.getValue().toString());
-        originalIm = new ImageView(createImage(imageArray));
+        originalImage = new ImageView(createImage(imageArray));
         Mat blured = simpleBlur(imageArray);
         blurIm = new ImageView(createImage(blured));
         Mat threshold = threshold(blured, 20, 255, 0);
@@ -107,17 +90,6 @@ public class ConvexHullGUI extends AbstractGUI{
         convexHullIm = new ImageView(createImage(imageWithContoursAndHulls));
     }
 
-    private void populateImageList() {
-        imageList = new ComboBox();
-        imageList.setItems(FXCollections.observableArrayList(
-                Arrays.asList(new File("./src/resources/images").listFiles()).
-                        stream().
-                        filter(File::isFile).
-                        map(File::getName).
-                        toArray()));
-        imageList.setValue("hand2.jpg");
-        imageList.addEventHandler(EventType.ROOT, event -> refreshAllImages());
-    }
 
 
     private Slider createBaseSlider(final int minVal, final int maxVal) {
@@ -130,9 +102,9 @@ public class ConvexHullGUI extends AbstractGUI{
         return sli;
     }
 
-    void refreshAllImages(){
+    public void refreshAllImages(){
         Mat imageArray = getImageArray(PATH_TO_IMAGES + imageList.getValue().toString());
-        originalIm.setImage(createImage(imageArray));
+        originalImage.setImage(createImage(imageArray));
         Mat bluredImage = simpleBlur(imageArray);
         blurIm.setImage(createImage(bluredImage));
 

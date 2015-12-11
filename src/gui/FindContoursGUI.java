@@ -33,7 +33,6 @@ public class FindContoursGUI extends AbstractGUI {
     static ImageView binarizedImageView;
     static ImageView imageWithContours;
     static ImageView imageWithShapes;
-    static ImageView imageViewOrigin;
 
     static Mat binarizedImageMat;
 
@@ -49,7 +48,7 @@ public class FindContoursGUI extends AbstractGUI {
         HBox row2 = new HBox();
 
         Mat imageArray = getImageArray(PATH_TO_IMAGES + currentImage + ".jpg");
-        imageViewOrigin = new ImageView(createImage(imageArray));
+        originalImage = new ImageView(createImage(imageArray));
         binarizedImageMat = binarizeImage(imageArray, 40, 140);
         binarizedImageView = new ImageView(createImage(binarizedImageMat));
         lowBinaryLevel = createBinarSlider();
@@ -58,7 +57,7 @@ public class FindContoursGUI extends AbstractGUI {
         VBox binarizedImageHBox = new VBox();
         binarizedImageHBox.getChildren().addAll(binarizedImageView, lowBinaryLevel, highBinaryLevel);
 
-        row1.getChildren().addAll(imageViewOrigin, binarizedImageHBox);
+        row1.getChildren().addAll(originalImage, binarizedImageHBox);
 
         imageWithContours = new ImageView(createImage(plotContours(findContours(binarizedImageMat, 0, 0), imageArray, new Scalar(255, 255, 0))));
         imageWithShapes = new ImageView(createImage(plotContours(findCircles(binarizedImageMat, 0, 0), imageArray, new Scalar(255, 255, 0))));
@@ -93,6 +92,11 @@ public class FindContoursGUI extends AbstractGUI {
             }
         });
         return slider;
+    }
+
+    @Override
+    public void refreshAllImages() {
+
     }
 
     public static void main(String[] args) {

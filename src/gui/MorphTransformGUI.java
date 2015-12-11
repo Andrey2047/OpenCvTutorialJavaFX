@@ -1,9 +1,7 @@
 package gui;
 
-import algorithm.CannyAlg;
 import javafx.collections.FXCollections;
 import javafx.event.EventType;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -16,7 +14,6 @@ import javafx.stage.Stage;
 import org.opencv.core.Mat;
 
 import static algorithm.CommonService.getImageArray;
-import static algorithm.MorphologicalTransformationFunction.dialate;
 import static algorithm.MorphologicalTransformationFunction.erode;
 import static algorithm.MorphologicalTransformationFunction.transform;
 
@@ -32,7 +29,6 @@ public class MorphTransformGUI extends AbstractGUI{
     static Slider iterationNumberField;
     static ChoiceBox transformTypeBox;
 
-    static ImageView originalImageView;
     static ImageView erodedImageView;
 
 
@@ -52,13 +48,13 @@ public class MorphTransformGUI extends AbstractGUI{
                 new ChoiceBox(FXCollections.observableArrayList("MORPH_OPEN", "MORPH_CLOSE", "MORPH_GRADIENT", "MORPH_TOPHAT", "MORPH_BLACKHAT"));
         transformTypeBox.setValue("MORPH_OPEN");
 
-        erodeShapeBox.addEventHandler(EventType.ROOT, event -> refreshErodeImage());
-        transformTypeBox.addEventHandler(EventType.ROOT, event -> refreshErodeImage());
+        erodeShapeBox.addEventHandler(EventType.ROOT, event -> refreshAllImages());
+        transformTypeBox.addEventHandler(EventType.ROOT, event -> refreshAllImages());
         kSizeField = new TextField("3");
-        kSizeField.addEventHandler(EventType.ROOT, e -> refreshErodeImage());
+        kSizeField.addEventHandler(EventType.ROOT, e -> refreshAllImages());
         iterationNumberField = createSlider(0,10);
 
-        originalImageView = new ImageView(createImage(getImageArray(CURRENT_IMAGE)));
+        originalImage = new ImageView(createImage(getImageArray(CURRENT_IMAGE)));
         erodedImageView = new ImageView(createImage(erode(getImageArray(CURRENT_IMAGE), 0, 3, 1)));
 
         VBox imageVbox = new VBox();
@@ -67,7 +63,7 @@ public class MorphTransformGUI extends AbstractGUI{
                 createHbox(new Label("shape"), erodeShapeBox),
                 createHbox(new Label("transfromType"), transformTypeBox));
 
-        row1.getChildren().addAll(originalImageView, imageVbox);
+        row1.getChildren().addAll(originalImage, imageVbox);
         root.getChildren().addAll(row1);
         stage.setTitle("Canny Alg");
         stage.setScene(new Scene(root, 300, 275));
@@ -79,12 +75,12 @@ public class MorphTransformGUI extends AbstractGUI{
         slider.setMin(min);
         slider.setMax(max);
         slider.addEventHandler(EventType.ROOT, event -> {
-            refreshErodeImage();
+            refreshAllImages();
         });
         return slider;
     }
 
-    private void refreshErodeImage(){
+    public void refreshAllImages(){
         int kSize = Integer.valueOf(kSizeField.getText());
         int iterationNumber = (int)(iterationNumberField.getValue());
         int shape = "MORPH_RECT".equals(erodeShapeBox.getValue()) ? 0 : 1;

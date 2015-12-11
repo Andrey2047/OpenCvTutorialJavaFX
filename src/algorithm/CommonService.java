@@ -16,6 +16,13 @@ import static org.opencv.imgproc.Imgproc.threshold;
  */
 public class CommonService {
 
+    public static Mat grayImage(Mat image){
+        Mat gray = new Mat();
+        cvtColor(image, gray, Imgproc.COLOR_RGB2GRAY);
+        return gray;
+    }
+
+
     public static Mat binarizeImage(Mat image, int lowBorder, int highBorder){
         Mat dst = new Mat();
         Mat gray = new Mat();

@@ -71,21 +71,21 @@ public class ImageDisolvingGUI extends AbstractGUI {
         sli.setShowTickLabels(true);
         sli.setShowTickMarks(true);
 
-        sli.valueProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
-                double alfa = sli.getValue();
-                Mat dst = new Mat();
-
-                Mat imageArray1 = getImageArray(IMAGE_1);;
-                Mat imageArray2 = getImageArray(IMAGE_2);
-
-                double gamma = gammaKoeffSlider.getValue();
-                Core.addWeighted(imageArray1.submat(new Range(0, 160), new Range(0, 250)), alfa, imageArray2.submat(new Range(0, 160), new Range(0, 250)), 1 - alfa, gamma, dst);
-                resultImageView.setImage(createImage(dst));
-            }
-        });
+        sli.valueProperty().addListener(ev -> refreshAllImages());
         return sli;
+    }
+
+    @Override
+    public void refreshAllImages() {
+        double alfa = alfaKoeffSlider.getValue();
+        Mat dst = new Mat();
+
+        Mat imageArray1 = getImageArray(IMAGE_1);;
+        Mat imageArray2 = getImageArray(IMAGE_2);
+
+        double gamma = gammaKoeffSlider.getValue();
+        Core.addWeighted(imageArray1.submat(new Range(0, 160), new Range(0, 250)), alfa, imageArray2.submat(new Range(0, 160), new Range(0, 250)), 1 - alfa, gamma, dst);
+        resultImageView.setImage(createImage(dst));
     }
 
     public static void main(String[] args) {

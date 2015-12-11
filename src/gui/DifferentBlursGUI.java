@@ -25,7 +25,6 @@ public class DifferentBlursGUI extends AbstractGUI{
 
     static String currentImagePath = PATH_TO_IMAGES + currentImage + ".jpg";
 
-    ImageView originalImage;
     ImageView gaussianBlurView;
 
     TextField xKSizeGaussField;
@@ -138,6 +137,11 @@ public class DifferentBlursGUI extends AbstractGUI{
         double sigmaSpace = sigmaSpaceSlider.getValue();
         Mat blurImage = BlurFilters.bilateralBlur(currentImagePath, sigmaColor, sigmaSpace);
         bilateralBlurView.setImage(createImage(blurImage));
+    }
+
+    @Override
+    public void refreshAllImages() {
+
     }
 
     public static void main(String[] args) {

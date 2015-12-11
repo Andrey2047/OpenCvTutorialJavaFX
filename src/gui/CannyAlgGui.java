@@ -30,7 +30,6 @@ public class CannyAlgGui extends AbstractGUI {
 
     static TextField appertureSize;
 
-    static ImageView imageView;
     static ImageView imageViewOrigin;
 
     @Override
@@ -42,7 +41,7 @@ public class CannyAlgGui extends AbstractGUI {
         Image img = createImage(SobelGradient.execute(PATH_TO_IMAGES + currentImage + ".jpg", 0, 1, 1, 1, 1, 50, 255));
 
         imageViewOrigin = new ImageView(createImage(CommonService.getImageArray(PATH_TO_IMAGES + currentImage + ".jpg")));
-        imageView = new ImageView(img);
+        originalImage = new ImageView(img);
 
         threshold1 = new TextField("1");
         threshold2 = new TextField("1");
@@ -59,7 +58,7 @@ public class CannyAlgGui extends AbstractGUI {
                 int apperture = Integer.valueOf(appertureSize.getText());
 
                 Image img = createImage(CannyAlg.execute(PATH_TO_IMAGES + currentImage + ".jpg", th1, th2, apperture, true));
-                imageView.setImage(img);
+                originalImage.setImage(img);
             }
         });
 
@@ -69,7 +68,7 @@ public class CannyAlgGui extends AbstractGUI {
 
         HBox hBox5 = new HBox();
 
-        hBox0.getChildren().addAll(imageViewOrigin, imageView );
+        hBox0.getChildren().addAll(imageViewOrigin, originalImage );
         hBox1.getChildren().addAll(new Label("threshold1"), threshold1, new Label("threshold2"), threshold2);
         hBox3.getChildren().addAll(new Label("appertureSize"), appertureSize, refreshButton);
         hBox5.getChildren().addAll(createImageButton("house"), createImageButton("hand"), createImageButton("car"));
@@ -81,7 +80,7 @@ public class CannyAlgGui extends AbstractGUI {
         primaryStage.show();
     }
 
-    private static Button createImageButton(final String imageName){
+    private Button createImageButton(final String imageName){
         Button button = new Button(imageName);
         button.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -89,7 +88,7 @@ public class CannyAlgGui extends AbstractGUI {
             public void handle(ActionEvent event) {
                 currentImage = imageName;
                 Image img = createImage(CannyAlg.execute(PATH_TO_IMAGES + currentImage + ".jpg", 1, 1, 3, true));
-                imageView.setImage(img);
+                originalImage.setImage(img);
                 try {
                     imageViewOrigin.setImage(new Image(getClass().getResource(imageName + ".jpg").toURI().toString()));
                 } catch (URISyntaxException e) {
@@ -98,6 +97,12 @@ public class CannyAlgGui extends AbstractGUI {
             }
         });
         return button;
+    }
+
+
+    @Override
+    public void refreshAllImages() {
+
     }
 
     public static void main(String[] args) {
