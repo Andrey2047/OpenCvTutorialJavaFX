@@ -62,17 +62,6 @@ public class ThresholdGUI extends AbstractGUI {
         stage.show();
     }
 
-
-    private Slider createSlider(int min, int max) {
-        Slider slider = new Slider();
-        slider.setMin(min);
-        slider.setMax(max);
-        slider.addEventHandler(EventType.ROOT, event -> {
-            refreshAllImages();
-        });
-        return slider;
-    }
-
     public void refreshAllImages(){
         int maxValue = Integer.valueOf(maxValueField.getText());
         int thValue = (int)(thresholdValue.getValue());

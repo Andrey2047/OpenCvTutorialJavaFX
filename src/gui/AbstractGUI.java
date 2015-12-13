@@ -7,6 +7,7 @@ import javafx.event.EventType;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -63,6 +64,12 @@ public abstract class AbstractGUI extends Application {
         return hbox;
     }
 
+    VBox createVbox(Node... nodes) {
+        VBox vbox = new VBox();
+        vbox.getChildren().addAll(nodes);
+        return vbox;
+    }
+
     protected void populateImageList() {
         imageList = new ComboBox();
         imageList.setItems(FXCollections.observableArrayList(
@@ -81,5 +88,16 @@ public abstract class AbstractGUI extends Application {
 
     }
 
+    Slider createSlider(int min, int max) {
+        Slider slider = new Slider();
+        slider.setMin(min);
+        slider.setMax(max);
+        slider.setShowTickLabels(true);
+        slider.setShowTickMarks(true);
+        slider.addEventHandler(EventType.ROOT, event -> {
+            refreshAllImages();
+        });
+        return slider;
+    }
 
 }

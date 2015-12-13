@@ -3,6 +3,8 @@ package gui;
 
 import algorithm.CommonService;
 import algorithm.Histogram;
+import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import org.opencv.core.Mat;
@@ -17,6 +19,8 @@ public class BackProjectionGUI extends AbstractGUI{
     ImageView equalizedView;
     ImageView grayedView;
 
+    Slider binsSlider;
+
     @Override
     public void prepareStart() {
         HBox row1 = new HBox();
@@ -24,9 +28,13 @@ public class BackProjectionGUI extends AbstractGUI{
         Mat imageArray = getImageArray(PATH_TO_IMAGES + imageList.getValue().toString());
         originalImage = new ImageView(createImage(imageArray));
         grayedView = new ImageView(createImage(CommonService.grayImage(imageArray)));
-        equalizedView = new ImageView(createImage(Histogram.backProjection(imageArray)));
+        equalizedView = new ImageView(createImage(Histogram.selfBackProjection(imageArray, 10)));
         row1.getChildren().addAll(imageList, originalImage, grayedView);
-        row2.getChildren().addAll(equalizedView);
+
+        binsSlider = createSlider(25, 50);
+
+        row2.getChildren().addAll(createVbox(equalizedView,
+                createHbox(new Label("beans"), binsSlider)));
         addRow(row1, row2);
     }
 
@@ -35,7 +43,8 @@ public class BackProjectionGUI extends AbstractGUI{
         Mat imageArray = getImageArray(PATH_TO_IMAGES + imageList.getValue().toString());
         originalImage.setImage(createImage(imageArray));
         grayedView.setImage(createImage(CommonService.grayImage(imageArray)));
-        equalizedView.setImage(createImage(Histogram.backProjection(imageArray)));
+        int beans = (int)binsSlider.getValue();
+        equalizedView.setImage(createImage(Histogram.selfBackProjection(imageArray, beans)));
     }
 
     public static void main(String[] args) {

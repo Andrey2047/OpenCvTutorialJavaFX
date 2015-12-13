@@ -15,6 +15,8 @@ import static org.opencv.imgproc.Imgproc.cvtColor;
  */
 public class Histogram {
 
+    public static final MatOfFloat RANGES = new MatOfFloat(0, 180, 0, 255);
+
     /**
      * Makes image more contrast.
      */
@@ -25,20 +27,61 @@ public class Histogram {
         return dst;
     }
 
-    public static Mat backProjection(Mat image){
+    public static Mat selfBackProjection(Mat image, int beans){
+        List<Mat> huvImageArr = getHueChanelImage(image);
+        Mat mMaskMat = new Mat();
+        Mat histogramMat = new Mat();
+        Imgproc.calcHist(huvImageArr, new MatOfInt(0), mMaskMat, histogramMat, new MatOfInt(beans), new MatOfFloat(0, 108));
+
+        Core.normalize(histogramMat, histogramMat, 0, 255, Core.NORM_MINMAX, -1, new Mat());
+
+        Mat backProjection = new Mat();
+        Imgproc.calcBackProject(huvImageArr, new MatOfInt(0), histogramMat, backProjection, new MatOfFloat(0f, 255f), 1);
+
+        return backProjection;
+    }
+
+    private static List<Mat> getHueChanelImage(Mat image) {
         Mat hsvImage = new Mat();
         cvtColor(image, hsvImage, Imgproc.COLOR_BGR2HSV);
-        Mat huvImage = new Mat();
+        Mat huvImage = new Mat(hsvImage.size(), CvType.CV_8UC2);
 
         List<Mat> hsvImageArr = new ArrayList<>();
         hsvImageArr.add(0, hsvImage);
 
         List<Mat> huvImageArr = new ArrayList<>();
-        hsvImageArr.add(0, huvImage);
+        huvImageArr.add(0, huvImage);
 
-        Core.mixChannels(hsvImageArr, huvImageArr, new MatOfInt(0, 0));
-        return huvImage;
+        Core.mixChannels(hsvImageArr, huvImageArr, new MatOfInt(0, 0, 1, 1));
+        return huvImageArr;
     }
+
+    public static Mat getImageHistogram(Mat image, int beans, float lowRange, float highRange){
+        List<Mat> huvImageArr = new ArrayList<>();
+
+        Mat hsvImage = new Mat();
+        cvtColor(image, hsvImage, Imgproc.COLOR_BGR2HSV_FULL);
+
+        huvImageArr.add(0, hsvImage);
+
+        Mat mMaskMat = new Mat();
+        Mat histogramMat = new Mat();
+        MatOfInt histSize = new MatOfInt(beans, beans);
+
+        Imgproc.calcHist(huvImageArr, new MatOfInt(0, 1), mMaskMat, histogramMat, histSize, RANGES);
+
+        Core.normalize(histogramMat, histogramMat, 0, 255, Core.NORM_MINMAX, -1, new Mat());
+        return histogramMat;
+    }
+
+    public static Mat backProjection(Mat image, Mat hueHistogram){
+        Mat backProjection = new Mat();
+
+        Imgproc.calcBackProject(Arrays.asList(image), new MatOfInt(0, 1), hueHistogram, backProjection, new MatOfFloat(0, 180, 0, 255), 1);
+
+        return backProjection;
+    }
+
 
     public static Mat plotImageHistogram(Mat image){
         List<Mat> matList = new LinkedList<Mat>();
