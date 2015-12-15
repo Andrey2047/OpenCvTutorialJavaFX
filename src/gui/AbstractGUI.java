@@ -7,6 +7,7 @@ import javafx.event.EventType;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -100,4 +101,9 @@ public abstract class AbstractGUI extends Application {
         return slider;
     }
 
+    ScrollPane createScrollPane(ImageView imageView){
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setContent(imageView);
+        return scrollPane;
+    }
 }

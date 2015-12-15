@@ -61,7 +61,7 @@ public class FindHandGUI extends AbstractGUI {
 
     private Mat getBackProjection(Mat manImageMat, Mat handImageArray) {
         int beansValue = (int)binsSlider.getValue();
-        return backProjection(manImageMat, getImageHistogram(handImageArray, beansValue, 0, 180));
+        return backProjection(manImageMat, getImageHistogram(handImageArray, beansValue));
     }
 
     @Override
@@ -73,9 +73,5 @@ public class FindHandGUI extends AbstractGUI {
         launch(args);
     }
 
-    ScrollPane createScrollPane(ImageView imageView){
-        ScrollPane scrollPane = new ScrollPane();
-        scrollPane.setContent(imageView);
-        return scrollPane;
-    }
+
 }

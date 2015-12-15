@@ -56,7 +56,7 @@ public class Histogram {
         return huvImageArr;
     }
 
-    public static Mat getImageHistogram(Mat image, int beans, float lowRange, float highRange){
+    public static Mat getImageHistogram(Mat image, int beans){
         List<Mat> huvImageArr = new ArrayList<>();
 
         Mat hsvImage = new Mat();
@@ -83,20 +83,23 @@ public class Histogram {
     }
 
 
-    public static Mat plotImageHistogram(Mat image){
-        List<Mat> matList = new LinkedList<Mat>();
-        matList.add(image);
-        Mat histogram = new Mat();
-        MatOfFloat ranges = new MatOfFloat(0,256);
-        MatOfInt histSize = new MatOfInt(255);
-        Imgproc.calcHist(matList, new MatOfInt(0), new Mat(), histogram, histSize, ranges);
-        Mat histImage = Mat.zeros( 100, (int)histSize.get(0, 0)[0], CvType.CV_8UC1);
-        Core.normalize(histogram, histogram, 1, histImage.rows(), Core.NORM_MINMAX, -1, new Mat());
-        for( int i = 0; i < (int)histSize.get(0, 0)[0]; i++ ) {
-            Core.line(histImage, new Point(i, histImage.rows()), new Point(i, histImage.rows()-Math.round( histogram.get(i,0)[0] )), new Scalar(255, 255, 255), 1, 8, 0);
-        }
+    public static Mat plotHueSaturationHistogram(Mat image){
+        Mat histogram = getImageHistogram(image, 30);
+        return buildImageHistogram(histogram, 30, 30);
+    }
 
-        return histImage;
+    public static Mat buildImageHistogram(Mat histogram, int hBins, int sBins){
+        int scale = 10;
+        Mat dst = new Mat(new Size(hBins*scale, sBins*scale), CvType.CV_8UC3);
+        for(int hue=0; hue < hBins; hue++){
+            for(int saturation =0; saturation < sBins; saturation++){
+                double binValue = histogram.get(hue, saturation)[0];
+                Point lowPoint = new Point((hue * scale), saturation * scale);
+                Point upperPoint = new Point((hue+1) * scale-1, (saturation+1) * scale -1);
+                Core.rectangle(dst, lowPoint, upperPoint, new Scalar(binValue, binValue, binValue), Core.FILLED);
+            }
+        }
+        return dst;
     }
 
 }
