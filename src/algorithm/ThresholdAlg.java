@@ -40,4 +40,16 @@ public class ThresholdAlg {
         Core.merge(arrays, dst);
         return dst;
     }
+
+    public static Mat castToThreeChannel(Mat image){
+        List<Mat> arrays = new ArrayList<>();
+        Mat dst = new Mat();
+        arrays.add(image);
+        arrays.add(image);
+        arrays.add(image);
+        Core.merge(arrays, dst);
+        return dst;
+    }
+
+
 }

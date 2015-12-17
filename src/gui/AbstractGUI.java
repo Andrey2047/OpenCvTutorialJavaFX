@@ -74,7 +74,7 @@ public abstract class AbstractGUI extends Application {
     protected void populateImageList() {
         imageList = new ComboBox();
         imageList.setItems(FXCollections.observableArrayList(
-                Arrays.asList(new File("./src/resources/images").listFiles()).
+                Arrays.asList(new File("./" + getImagePath()).listFiles()).
                         stream().
                         filter(File::isFile).
                         map(File::getName).
@@ -105,5 +105,9 @@ public abstract class AbstractGUI extends Application {
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.setContent(imageView);
         return scrollPane;
+    }
+
+    public String getImagePath(){
+        return PATH_TO_IMAGES;
     }
 }

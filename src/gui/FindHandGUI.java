@@ -2,15 +2,16 @@ package gui;
 
 import algorithm.ThresholdAlg;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.image.ImageView;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 
+import java.util.Arrays;
+
 import static algorithm.CommonService.getImageArray;
 import static algorithm.Histogram.backProjection;
-import static algorithm.Histogram.getImageHistogram;
+import static algorithm.Histogram.getImagesHistogram;
 
 
 /**
@@ -61,7 +62,7 @@ public class FindHandGUI extends AbstractGUI {
 
     private Mat getBackProjection(Mat manImageMat, Mat handImageArray) {
         int beansValue = (int)binsSlider.getValue();
-        return backProjection(manImageMat, getImageHistogram(handImageArray, beansValue));
+        return backProjection(manImageMat, getImagesHistogram(Arrays.asList(handImageArray), beansValue));
     }
 
     @Override
