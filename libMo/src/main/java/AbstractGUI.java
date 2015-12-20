@@ -1,6 +1,3 @@
-package gui;
-
-import algorithm.CommonService;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.event.EventType;
@@ -15,14 +12,13 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.opencv.core.Core;
-import org.opencv.core.Mat;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.Arrays;
 
 /**
- * Created by andriiko on 11/26/2015.
+ * Created by Samsung on 12/20/2015.
  */
 public abstract class AbstractGUI extends Application {
 
@@ -55,8 +51,8 @@ public abstract class AbstractGUI extends Application {
         root.getChildren().addAll(rows);
     }
 
-    public static Image createImage(Mat mat){
-        return new Image(new ByteArrayInputStream(CommonService.convertToMatOfByte(mat).toArray()));
+    public static Image createImage(byte[] mat){
+        return new Image(new ByteArrayInputStream(mat));
     }
 
     protected HBox createHbox(Node... nodes) {

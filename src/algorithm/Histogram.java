@@ -65,7 +65,7 @@ public class Histogram {
         Mat nHistogramMat = new Mat();
         Core.normalize(histogramMat, nHistogramMat, 0, 255, Core.NORM_MINMAX, -1, new Mat());
 
-        return nHistogramMat;
+        return histogramMat;
     }
 
     private static  List<Mat>  convertImagesToHSV(List<Mat> images) {
