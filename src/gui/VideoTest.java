@@ -25,6 +25,7 @@ public class VideoTest extends AbstractGUI {
     @Override
     public void prepareStart() throws Exception {
         grabber.grab();
+        grabber.grab();
         Mat dst = new Mat();
         grabber.read(dst);
         cameraView.setImage(createImage(dst));
@@ -47,7 +48,14 @@ public class VideoTest extends AbstractGUI {
     }
 
     private void handlePressStop() {
-        timer.te
+        timer.shutdown();
+        grabber.release();
+        this.timer.shutdown();
+        try {
+            this.timer.awaitTermination(33, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private void handlePress() {
