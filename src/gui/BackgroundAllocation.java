@@ -5,7 +5,9 @@ import javafx.event.EventType;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import video.BackgroundCaptor;
 import video.CameraCapture;
@@ -36,36 +38,29 @@ public class BackgroundAllocation extends AbstractGUI {
         cameraCapture.testRead();
         Mat dst = cameraCapture.grabFrame();
         cameraView.setImage(createImage(dst));
-        lowThresholdView.setImage(createImage(dst));
-        highThresholdView.setImage(createImage(dst));
+        lowThresholdView.setImage(createImage(new Mat(640, 480, CvType.CV_32FC3, new Scalar(0,0,0))));
+        highThresholdView.setImage(createImage(new Mat(640, 480, CvType.CV_32FC3, new Scalar(0,0,0))));
 
-        addRow(createHbox(cameraView, startToShow));
+        addRow(createHbox(startToShow));
         addRow(createHbox(lowThresholdView, highThresholdView));
 
-        timer = Executors.newScheduledThreadPool(2);
-        Runnable learningTask = () -> {
+//        timer = Executors.newScheduledThreadPool(2);
+//        Runnable learningTask = () -> {
+//            Mat dst1 = cameraCapture.grabFrame();
+//            backgroundCaptor.accumulateBackground(dst1);
+//            Platform.runLater(() -> cameraView.setImage(createImage(dst1)));
+//        };
+//        timer.scheduleAtFixedRate(learningTask, 0, 100, TimeUnit.MILLISECONDS);
+
+        for(int i=0; i < 500; i++){
             Mat dst1 = cameraCapture.grabFrame();
             backgroundCaptor.accumulateBackground(dst1);
-            if(backgroundCaptor.getAccumulator() % 10000 == 0){
-                backgroundCaptor.normalizeAccumulators();
-            }
-            Platform.runLater(() -> cameraView.setImage(createImage(dst1)));
-        };
-        timer.scheduleAtFixedRate(learningTask, 0, 100, TimeUnit.MILLISECONDS);
+            Thread.sleep(10);
+        }
+        backgroundCaptor.normalizeAccumulators();
+        lowThresholdView.setImage(createImage(backgroundCaptor.getAvarageForeground()));
+        highThresholdView.setImage(createImage(backgroundCaptor.getDiffAvarageForeground()));
 
-        startToShow.addEventHandler(EventType.ROOT, event -> {
-            Runnable displayTask = () -> {
-                Mat dst1 = cameraCapture.grabFrame();
-                Mat lowTh = backgroundCaptor.getLowForeground();
-                Mat high = backgroundCaptor.getHighForeground();
-                Platform.runLater(() -> {
-                    cameraView.setImage(createImage(dst1));
-                    lowThresholdView.setImage(createImage(lowTh));
-                    highThresholdView.setImage(createImage(high));
-                });
-            };
-            timer.scheduleAtFixedRate(displayTask, 0, 33, TimeUnit.MILLISECONDS);
-        });
     }
 
     @Override

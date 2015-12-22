@@ -24,9 +24,9 @@ public class CameraCapture {
             try {
                 capture.grab();
                 capture.read(frame);
-                if (!frame.empty()) {
-                    Imgproc.cvtColor(frame, frame, Imgproc.COLOR_BGR2GRAY);
-                }
+//                if (!frame.empty()) {
+//                    Imgproc.cvtColor(frame, frame, Imgproc.COLOR_BGR2GRAY);
+//                }
 
             } catch (Exception e) {
                 System.err.println("Exception during the image elaboration: " + e);
