@@ -52,14 +52,14 @@ public class BackgroundAllocation extends AbstractGUI {
 //        };
 //        timer.scheduleAtFixedRate(learningTask, 0, 100, TimeUnit.MILLISECONDS);
 
-        for(int i=0; i < 500; i++){
+        for(int i=0; i < 1500; i++){
             Mat dst1 = cameraCapture.grabFrame();
             backgroundCaptor.accumulateBackground(dst1);
             Thread.sleep(10);
         }
         backgroundCaptor.normalizeAccumulators();
-        lowThresholdView.setImage(createImage(backgroundCaptor.getAvarageForeground()));
-        highThresholdView.setImage(createImage(backgroundCaptor.getDiffAvarageForeground()));
+        //lowThresholdView.setImage(createImage(backgroundCaptor.getAvarageForeground()));
+        highThresholdView.setImage(createImage(backgroundCaptor.getLowForeground()));
 
     }
 

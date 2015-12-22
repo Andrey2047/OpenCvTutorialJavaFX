@@ -7,7 +7,6 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -74,7 +73,7 @@ public class BackgroundCaptor {
         Core.add(diffAvarageForeground, new Scalar(1, 1, 1), diffAvarageForeground);
 
         setHighThreshold();
-        setHighLowThreshold();
+        setLowThreshold();
     }
 
     private void setHighThreshold() {
@@ -85,7 +84,7 @@ public class BackgroundCaptor {
         Core.extractChannel(highForeground, highForeground3, 2);
     }
 
-    private void setHighLowThreshold() {
+    private void setLowThreshold() {
         Core.convertScaleAbs(diffAvarageForeground, currentFrame, 6.0, 0);
         Core.subtract(currentFrame, avarageForeground, lowForeground);
         Core.extractChannel(lowForeground, lowForeground1, 0);
@@ -145,7 +144,7 @@ public class BackgroundCaptor {
     }
 
     public Mat getHighForeground(){
-        return lowForeground;
+        return highForeground;
     }
 
     public int getAccumulator(){
@@ -157,6 +156,7 @@ public class BackgroundCaptor {
     }
 
     public Mat getDiffAvarageForeground(){
+        Core.convertScaleAbs(diffAvarageForeground, diffAvarageForeground, 7, 0);
         return diffAvarageForeground;
     }
 
