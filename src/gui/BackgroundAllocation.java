@@ -1,5 +1,6 @@
 package gui;
 
+import algorithm.ThresholdAlg;
 import javafx.application.Platform;
 import javafx.event.EventType;
 import javafx.scene.control.Button;
@@ -41,8 +42,8 @@ public class BackgroundAllocation extends AbstractGUI {
         lowThresholdView.setImage(createImage(new Mat(640, 480, CvType.CV_32FC3, new Scalar(0,0,0))));
         highThresholdView.setImage(createImage(new Mat(640, 480, CvType.CV_32FC3, new Scalar(0,0,0))));
 
-        addRow(createHbox(startToShow));
-        addRow(createHbox(lowThresholdView, highThresholdView));
+        addRow(createHbox(createScrollPane(cameraView), startToShow));
+        addRow(createHbox(createScrollPane(lowThresholdView), createScrollPane(highThresholdView)));
 
 //        timer = Executors.newScheduledThreadPool(2);
 //        Runnable learningTask = () -> {
@@ -52,14 +53,29 @@ public class BackgroundAllocation extends AbstractGUI {
 //        };
 //        timer.scheduleAtFixedRate(learningTask, 0, 100, TimeUnit.MILLISECONDS);
 
-        for(int i=0; i < 1500; i++){
+        for(int i=0; i < 150; i++){
             Mat dst1 = cameraCapture.grabFrame();
             backgroundCaptor.accumulateBackground(dst1);
-            Thread.sleep(10);
+            Thread.sleep(30);
         }
         backgroundCaptor.normalizeAccumulators();
-        //lowThresholdView.setImage(createImage(backgroundCaptor.getAvarageForeground()));
-        highThresholdView.setImage(createImage(backgroundCaptor.getLowForeground()));
+        lowThresholdView.setImage(createImage(backgroundCaptor.getHighForeground()));
+        Mat foreGround = backgroundCaptor.backgroundDiff(cameraCapture.grabFrame());
+        highThresholdView.setImage(createImage(foreGround));
+        Mat diffAvarageForeground = backgroundCaptor.getDiffAvarageForeground();
+        cameraView.setImage(createImage(diffAvarageForeground));
+
+        final Mat diff3 = ThresholdAlg.castToThreeChannel(foreGround);
+
+        Runnable task = () -> {
+            Mat dst1 = cameraCapture.grabFrame();
+            Mat res = new Mat();
+            Core.bitwise_and(dst1, diff3, res);
+
+            Platform.runLater(() -> cameraView.setImage(createImage(res)));
+        };
+        this.timer = Executors.newSingleThreadScheduledExecutor();
+        this.timer.scheduleAtFixedRate(task, 0, 33, TimeUnit.MILLISECONDS);
 
     }
 

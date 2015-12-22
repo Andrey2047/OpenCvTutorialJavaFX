@@ -40,8 +40,9 @@ public class BackgroundCaptor {
         this.currentFrame = currentFrame;
         if(accumulatedFramesCount > 0) {
             Imgproc.accumulate(currentFrame, avarageForeground);
-            Mat deffScratchImage = new Mat();
+            Mat deffScratchImage = new Mat(currentFrame.size(), CvType.CV_8UC3);
             Core.absdiff(currentFrame, previousFrame, deffScratchImage);
+            Imgproc.threshold(deffScratchImage, deffScratchImage, 20, 255, Imgproc.THRESH_TOZERO);
             Imgproc.accumulate(deffScratchImage, diffAvarageForeground);
         } else {
             initBaseMatrix(currentFrame);
@@ -70,7 +71,7 @@ public class BackgroundCaptor {
     public void normalizeAccumulators(){
         Core.convertScaleAbs(avarageForeground, avarageForeground, 1f/accumulatedFramesCount, 1);
         Core.convertScaleAbs(diffAvarageForeground, diffAvarageForeground, 1f / accumulatedFramesCount, 1);
-        Core.add(diffAvarageForeground, new Scalar(1, 1, 1), diffAvarageForeground);
+        //Core.add(diffAvarageForeground, new Scalar(1, 1, 1), diffAvarageForeground);
 
         setHighThreshold();
         setLowThreshold();
@@ -111,7 +112,7 @@ public class BackgroundCaptor {
             for(int j=0; j < frameWidth - 1; j++){
                 if(chanel1.get(i,j)[0] > lowForeground1.get(i,j)[0] &&
                         chanel1.get(i,j)[0] < highForeground1.get(i,j)[0]     ){
-                    resultMask.get(i,j)[0] = 255;
+                    resultMask.put(i,j, 254.0);
                 }
             }
         }
@@ -120,7 +121,7 @@ public class BackgroundCaptor {
             for(int j=0; j < frameWidth - 1; j++){
                 if(chanel2.get(i,j)[0] > lowForeground2.get(i,j)[0] &&
                         chanel2.get(i,j)[0] < highForeground2.get(i,j)[0]     ){
-                    iMaskT.get(i,j)[0] = 255;
+                    iMaskT.put(i,j, 254.0);
                 }
             }
         }
@@ -130,12 +131,13 @@ public class BackgroundCaptor {
             for(int j=0; j < frameWidth - 1; j++){
                 if(chanel3.get(i,j)[0] >= lowForeground3.get(i,j)[0] &&
                         chanel2.get(i,j)[0] <= highForeground3.get(i,j)[0]     ){
-                    iMaskT.get(i,j)[0] = 255;
+                    iMaskT.put(i,j,254.0);
                 }
             }
         }
         Core.bitwise_or(resultMask, iMaskT, resultMask);
-
+        Mat invertcolormatrix= new Mat(resultMask.size(), CvType.CV_8UC1, new Scalar(254));
+        Core.subtract(invertcolormatrix, resultMask, resultMask);
         return resultMask;
     }
 
@@ -156,7 +158,7 @@ public class BackgroundCaptor {
     }
 
     public Mat getDiffAvarageForeground(){
-        Core.convertScaleAbs(diffAvarageForeground, diffAvarageForeground, 7, 0);
+        //Core.convertScaleAbs(diffAvarageForeground, diffAvarageForeground, 7, 0);
         return diffAvarageForeground;
     }
 

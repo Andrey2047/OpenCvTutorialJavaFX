@@ -24,6 +24,10 @@ public class CameraCapture {
             try {
                 capture.grab();
                 capture.read(frame);
+                if(frame.rows() == 0){
+                    Thread.sleep(2000);
+                    capture.read(frame);
+                }
 //                if (!frame.empty()) {
 //                    Imgproc.cvtColor(frame, frame, Imgproc.COLOR_BGR2GRAY);
 //                }
