@@ -11,6 +11,13 @@ public class CameraCapture {
 
     private VideoCapture capture = new VideoCapture(0);
 
+    public CameraCapture() {
+    }
+
+    public CameraCapture(String fileName) {
+        capture = new VideoCapture(fileName);
+    }
+
     public void testRead(){
         capture.grab();
         capture.read(new Mat());
