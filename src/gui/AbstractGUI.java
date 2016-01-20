@@ -25,6 +25,7 @@ import java.util.Arrays;
  * Created by andriiko on 11/26/2015.
  */
 public abstract class AbstractGUI extends Application {
+    public static final String PATH_TO_VIDEOS = "src/resources/video/";
 
     VBox root;
     ComboBox imageList;
