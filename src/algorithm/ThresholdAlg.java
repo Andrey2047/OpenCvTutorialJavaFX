@@ -30,6 +30,12 @@ public class ThresholdAlg {
         return dst;
     }
 
+    public static Mat thresholdOneChannel(Mat image, double thresholdValue, double maxval, int type){
+        Mat dst = new Mat();
+        Imgproc.threshold(image, dst, thresholdValue, maxval, type);
+        return dst;
+    }
+
     public static Mat thresholdAndCastToThreeChanel(Mat image, double thresholdValue, double maxval, int type){
         Mat dst = new Mat();
         Imgproc.threshold(image, dst, thresholdValue, maxval, type);

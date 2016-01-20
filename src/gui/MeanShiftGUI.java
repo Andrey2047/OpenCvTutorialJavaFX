@@ -35,6 +35,7 @@ public class MeanShiftGUI extends AbstractGUI {
 
     private Mat firstFrame;
     private Mat roiHisto;
+    private Rect currentRect;
 
     private ScheduledExecutorService timer;
 
@@ -51,18 +52,21 @@ public class MeanShiftGUI extends AbstractGUI {
         binsSlider = createSlider(3, 100);
         backProjectionImageView = new ImageView();
         startVideo = new Button("start");
-        startVideo.setOnAction(event -> this.timer.scheduleAtFixedRate(task, 0, 60, TimeUnit.MILLISECONDS));
+        startVideo.setOnAction(event ->{
+                Bounds bounds = rubberBandSelection.getBounds();
+                currentRect = new Rect((int)bounds.getMinX(), (int)bounds.getMinY(), (int)bounds.getWidth(),(int) bounds.getHeight());
+                this.timer.scheduleAtFixedRate(task, 0, 60, TimeUnit.MILLISECONDS);}
+        );
         addRow(createHbox(binsSlider, startVideo));
         addRow(createHbox(imageLayer, backProjectionImageView));
 
          task = () -> {
             Mat grabbedFrame = cameraCapture.grabFrame();
-            Bounds bounds = rubberBandSelection.getBounds();
-            Rect rect = new Rect((int)bounds.getMinX(), (int)bounds.getMinY(), (int)bounds.getWidth(),(int) bounds.getHeight());
-            Mat backProjImage = Histogram.backProjection(grabbedFrame, roiHisto);
-            Video.meanShift(backProjImage, rect, new TermCriteria(1, 30, 2));
 
-            Core.rectangle(grabbedFrame, rect.tl(), rect.br(), new Scalar(122,122,122));
+            Mat backProjImage =  ThresholdAlg.thresholdOneChannel(Histogram.backProjection(grabbedFrame, roiHisto), 25, 255, 0);
+            Video.meanShift(backProjImage, currentRect, new TermCriteria(2, 50, 4));
+
+            Core.rectangle(grabbedFrame, currentRect.tl(), currentRect.br(), new Scalar(122,122,122));
             Platform.runLater(() -> backProjectionImageView.setImage(createImage(grabbedFrame)));
         };
         this.timer = Executors.newSingleThreadScheduledExecutor();
@@ -77,9 +81,9 @@ public class MeanShiftGUI extends AbstractGUI {
         int yLower = (int) rubberBandSelection.getBounds().getMinY();
         int yUpper = (int) rubberBandSelection.getBounds().getMaxY();
         Mat imageCut = CommonService.getROI(firstFrame, xLower, yLower, xUpper, yUpper);
-        imageCut = CommonService.
         roiHisto = Histogram.getImagesHistogram(imageCut, (int) binsSlider.getValue());
-        backProjectionImageView.setImage(createImage(Histogram.backProjection(firstFrame, roiHisto)));
+        Mat backProjImage =  ThresholdAlg.thresholdOneChannel(Histogram.backProjection(firstFrame, roiHisto), 25, 255, 0);
+        backProjectionImageView.setImage(createImage(backProjImage));
     }
 
     public static void main(String[] args) {
