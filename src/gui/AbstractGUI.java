@@ -80,7 +80,7 @@ public abstract class AbstractGUI extends Application {
                         map(File::getName).
                         toArray()));
         imageList.setValue("hand2.jpg");
-        imageList.addEventHandler(EventType.ROOT, event -> refreshAllImages());
+        imageList.setOnAction(event -> refreshAllImages());
     }
 
     public abstract void refreshAllImages();
@@ -95,7 +95,7 @@ public abstract class AbstractGUI extends Application {
         slider.setMax(max);
         slider.setShowTickLabels(true);
         slider.setShowTickMarks(true);
-        slider.addEventHandler(EventType.ROOT, event -> {
+        slider.setOnMouseReleased(event -> {
             refreshAllImages();
         });
         return slider;

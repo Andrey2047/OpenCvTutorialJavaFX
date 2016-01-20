@@ -2,12 +2,9 @@ package gui;
 
 
 import algorithm.Histogram;
-import javafx.collections.FXCollections;
-import javafx.event.EventType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Slider;
 import javafx.scene.image.ImageView;
-import org.opencv.core.Core;
 import org.opencv.core.Mat;
 
 import java.io.File;
@@ -42,7 +39,7 @@ public class BackProjectionGUI extends AbstractGUI{
 
     @Override
     public void prepareStart() {
-        populateEtalonImageList();
+        populateImageList();
         binsSlider = createSlider(10, 50);
         tSlider = createSlider(0, 255);
 
@@ -55,7 +52,7 @@ public class BackProjectionGUI extends AbstractGUI{
         etalonHistogramImage = new ImageView(createImage(plotHueSaturationHistogram(etalonImageArray, beanValue)));
         originalHistogramImage = new ImageView(createImage(plotHueSaturationHistogram(imageArray, beanValue)));
 
-        etalonHistogramm = getImagesHistogram(getHandsImages(), beanValue);
+        etalonHistogramm = getImagesHistogram2(getHandsImages(), beanValue);
         Mat backProjectionImageArray = Histogram.backProjection(imageArray, etalonHistogramm);
 
         backProjectionImage = new ImageView(createImage(backProjectionImageArray));
@@ -67,19 +64,6 @@ public class BackProjectionGUI extends AbstractGUI{
 
     }
 
-    protected void populateEtalonImageList() {
-        etalonImageList = new ComboBox();
-        etalonImageList.setItems(FXCollections.observableArrayList(
-                Arrays.asList(new File("./" + getImagePath()).listFiles()).
-                        stream().
-                        filter(File::isFile).
-                        map(File::getName).
-                        toArray()));
-        etalonImageList.setValue("hand2.jpg");
-        etalonImageList.addEventHandler(EventType.ROOT, event -> refreshAllImages());
-    }
-
-
     @Override
     public void refreshAllImages() {
         Mat imageArray = getImageArray(PATH_TO_IMAGES + imageList.getValue().toString());
@@ -89,7 +73,7 @@ public class BackProjectionGUI extends AbstractGUI{
         etalonImage.setImage(createImage(etalonImageArray));
         int beanValue = (int) binsSlider.getValue();
         originalHistogramImage.setImage(createImage(plotHueSaturationHistogram(etalonImageArray, beanValue)));
-        etalonHistogramm = getImagesHistogram(getHandsImages(), beanValue);
+        etalonHistogramm = getImagesHistogram2(getHandsImages(), beanValue);
         etalonHistogramImage.setImage(createImage(buildImageHistogram(etalonHistogramm, beanValue, beanValue)));
 
 
