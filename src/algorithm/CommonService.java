@@ -61,10 +61,10 @@ public class CommonService {
         mv.add(new Mat(image.size(), CvType.CV_8UC1));
         Core.split(hsvImage, mv);
         ArrayList<Mat> dst = new ArrayList<>(2);
-        dst.add(new Mat(mv.get(1).size(), CvType.CV_8UC1, new Scalar(0)));
-        dst.add(new Mat(mv.get(1).size(), CvType.CV_8UC1, new Scalar(0)));
         dst.add(new Mat(mv.get(1).size(), CvType.CV_8UC1));
-        Core.mixChannels(mv, dst, new MatOfInt(1, 1));
+        dst.add(new Mat(mv.get(1).size(), CvType.CV_8UC1));
+        dst.add(new Mat(mv.get(1).size(), CvType.CV_8UC1, new Scalar(0)));
+        Core.mixChannels(mv, dst, new MatOfInt(0, 0, 1, 1));
         Mat dstIm = new Mat();
         Core.merge(dst, dstIm);
         return dstIm;

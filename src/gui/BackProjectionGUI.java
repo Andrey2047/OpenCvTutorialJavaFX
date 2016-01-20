@@ -1,108 +1,72 @@
 package gui;
 
 
+import algorithm.CommonService;
 import algorithm.Histogram;
-import javafx.scene.control.ComboBox;
+import javafx.scene.Group;
+import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
 import javafx.scene.image.ImageView;
+import javafxext.RubberBandSelection;
 import org.opencv.core.Mat;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import static algorithm.CommonService.getImageArray;
-import static algorithm.Histogram.*;
-import static algorithm.ThresholdAlg.thresholdAndCastToThreeChanel;
 
 /**
  * Created by andriiko on 12/11/2015.
  */
 public class BackProjectionGUI extends AbstractGUI{
 
-    public static final String PATH_TO_IMAGES = "src/resources/images/";
-    ComboBox etalonImageList;
+    private ImageView hsvImageView;
+    private ImageView hueSatHistoImageView;
+    private ImageView hueSatImageView;
+    private ImageView backProjectionImageView;
 
-    ImageView etalonImage;
-    ImageView etalonHistogramImage;
+    private Button refreshRegionButton;
 
-    ImageView originalHistogramImage;
+    private RubberBandSelection rubberBandSelection;
 
-    ImageView backProjectionImage;
-    ImageView backProjectionImageHistogramm;
-
-    Mat etalonHistogramm;
-
-    Slider binsSlider;
-    Slider tSlider;
+    private Slider binsSlider;
 
     @Override
     public void prepareStart() {
         populateImageList();
-        binsSlider = createSlider(10, 50);
-        tSlider = createSlider(0, 255);
-
         Mat imageArray = getImageArray(PATH_TO_IMAGES + imageList.getValue().toString());
-        Mat etalonImageArray = getImageArray(PATH_TO_IMAGES + etalonImageList.getValue().toString());
-
         originalImage = new ImageView(createImage(imageArray));
-        etalonImage = new ImageView(createImage(etalonImageArray));
-        int beanValue = (int) binsSlider.getValue();
-        etalonHistogramImage = new ImageView(createImage(plotHueSaturationHistogram(etalonImageArray, beanValue)));
-        originalHistogramImage = new ImageView(createImage(plotHueSaturationHistogram(imageArray, beanValue)));
+        Group imageLayer = new Group();
+        imageLayer.getChildren().add(originalImage);
 
-        etalonHistogramm = getImagesHistogram2(getHandsImages(), beanValue);
-        Mat backProjectionImageArray = Histogram.backProjection(imageArray, etalonHistogramm);
+        rubberBandSelection = new RubberBandSelection(imageLayer);
 
-        backProjectionImage = new ImageView(createImage(backProjectionImageArray));
-        //backProjectionImageHistogramm = new ImageView(createImage(plotHueSaturationHistogram(backProjectionImageArray, beanValue)));
+        refreshRegionButton = new Button("Refresh");
 
-        addRow(createHbox(imageList, createScrollPane(originalImage), originalHistogramImage));
-        addRow(createHbox(etalonImageList, etalonImage, etalonHistogramImage));
-        addRow(createHbox(binsSlider, tSlider, createScrollPane(backProjectionImage)));
-
+        backProjectionImageView = new ImageView(createImage(imageArray));
+        hueSatHistoImageView = new ImageView();
+        hueSatImageView = new ImageView();
+        refreshRegionButton.setOnAction(event -> {
+            refreshAllImages();
+        });
+        binsSlider = createSlider(3, 100);
+        hsvImageView = new ImageView(createImage(CommonService.convertImagesToHSV(imageArray)));
+        addRow(createHbox(imageList, binsSlider, refreshRegionButton));
+        addRow(createHbox(imageLayer, hsvImageView, hueSatImageView));
+        addRow(createHbox(backProjectionImageView, hueSatHistoImageView));
     }
 
     @Override
     public void refreshAllImages() {
         Mat imageArray = getImageArray(PATH_TO_IMAGES + imageList.getValue().toString());
-        Mat etalonImageArray = getImageArray(PATH_TO_IMAGES + etalonImageList.getValue().toString());
-
         originalImage.setImage(createImage(imageArray));
-        etalonImage.setImage(createImage(etalonImageArray));
-        int beanValue = (int) binsSlider.getValue();
-        originalHistogramImage.setImage(createImage(plotHueSaturationHistogram(etalonImageArray, beanValue)));
-        etalonHistogramm = getImagesHistogram2(getHandsImages(), beanValue);
-        etalonHistogramImage.setImage(createImage(buildImageHistogram(etalonHistogramm, beanValue, beanValue)));
-
-
-        double tValue = tSlider.getValue();
-        Mat backProjectionImageArray = Histogram.backProjection(imageArray, etalonHistogramm);
-
-        backProjectionImage.setImage(createImage(getBackProjectImage(tValue, backProjectionImageArray, imageArray)));
-        //backProjectionImageHistogramm.setImage(createImage(plotHueSaturationHistogram(backProjectionImageArray, beanValue)));
-    }
-
-    private Mat getBackProjectImage(double tValue, Mat backProjectionImageArray, Mat originalImage) {
-        return thresholdAndCastToThreeChanel(equalizeHistogram(backProjectionImageArray), tValue, 255, 0);
-    }
-
-    public List<Mat> getHandsImages(){
-        List<Mat> toReturn = new ArrayList<>();
-        for(Object fileName: Arrays.asList(new File("./" + getImagePath()+"hands/").listFiles()).
-                stream().
-                filter(File::isFile).
-                map(File::getName).
-                toArray()){
-            toReturn.add(getImageArray(getImagePath()+"hands/" + fileName.toString()));
-        }
-        return toReturn;
-    }
-
-    @Override
-    public String getImagePath() {
-        return PATH_TO_IMAGES;
+        Mat img = getImageArray(PATH_TO_IMAGES + imageList.getValue().toString());
+        int xLower = (int) rubberBandSelection.getBounds().getMinX();
+        int xUpper = (int) rubberBandSelection.getBounds().getMaxX();
+        int yLower = (int) rubberBandSelection.getBounds().getMinY();
+        int yUpper = (int) rubberBandSelection.getBounds().getMaxY();
+        Mat imageCut = CommonService.getROI(img, xLower, yLower, xUpper, yUpper);
+        hueSatHistoImageView.setImage(createImage(Histogram.plotHueSaturationHistogram(imageCut, (int) binsSlider.getValue())));
+        backProjectionImageView.setImage(createImage(Histogram.backProjection(img, Histogram.getImagesHistogram(imageCut, (int) binsSlider.getValue()))));
+        hsvImageView.setImage(createImage(CommonService.convertImagesToHSV(imageArray)));
+        hueSatImageView.setImage(createImage(CommonService.getHueSatImage(imageArray)));
     }
 
     public static void main(String[] args) {
